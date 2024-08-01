@@ -1,1 +1,1 @@
-# chatEAT-backend
+# chateat-backend
