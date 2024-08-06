@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: chatEAT
+
+  datasource:
+    url: ${H2_URL}
+    driver-class-name: org.h2.Driver
+    username: ${H2_USERNAME}
+    password: ${H2_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        show_sql: true
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: debug
+
+      hibernate:
+        SQL: debug
