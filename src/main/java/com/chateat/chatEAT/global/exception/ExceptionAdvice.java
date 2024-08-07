@@ -1,48 +1,42 @@
 package com.chateat.chatEAT.global.exception;
 
-import java.net.BindException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-@Slf4j
 public class ExceptionAdvice {
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity handleBaseEx(BaseException exception) {
-        log.error("BaseException errorMessage() : {}", exception.getExceptionType().getErrorMessage());
-        log.error("BaseException errorCode() : {}", exception.getExceptionType().getErrorCode());
 
-        return new ResponseEntity(new ExceptionDto(exception.getExceptionType().getErrorCode()),
-                exception.getExceptionType().getHttpStatus());
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+
+        return ErrorResponse.of(e.getBindingResult());
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity handleValidEx(BindException exception) {
-        log.error("ValidException Occur {}", exception.getMessage());
-        return new ResponseEntity(new ExceptionDto(2000), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolationException(ConstraintViolationException e) {
+
+        return ErrorResponse.of(e.getConstraintViolations());
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity httpMessageNotReadableExceptionEx(HttpMessageNotReadableException exception) {
-        log.error("Json Parsing Exception Occur {}", exception.getMessage());
-        return new ResponseEntity(new ExceptionDto(3000), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler
+    public ResponseEntity handleBusinessLogicException(BusinessLogicException e) {
+        final ErrorResponse response = ErrorResponse.of(e.getExceptionCode());
+
+        return new ResponseEntity<>(response, HttpStatus.valueOf(e.getExceptionCode().getStatus()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity handleMemberEx(Exception exception) {
-        exception.printStackTrace();
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
-    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ErrorResponse handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
 
-    @Data
-    @AllArgsConstructor
-    static class ExceptionDto {
-        private Integer errorCode;
+        return ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

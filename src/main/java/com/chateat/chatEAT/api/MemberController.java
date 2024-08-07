@@ -4,7 +4,11 @@ import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
 import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
 import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
 import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
-import com.chateat.chatEAT.domain.member.response.*;
+import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
+import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
+import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
+import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
+import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
 import com.chateat.chatEAT.domain.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,10 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -29,14 +40,14 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/update")
+    @PatchMapping("/update")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
     public ResponseEntity<MemberUpdateResponse> update(@RequestBody final MemberUpdateRequest request) {
         MemberUpdateResponse response = memberService.update(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/update-password")
+    @PatchMapping("/update-password")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
     public ResponseEntity<Void> updatePassword(@RequestBody final UpdatePasswordRequest request) {
         memberService.updatePassword(request);
@@ -72,6 +83,7 @@ public class MemberController {
     @GetMapping("/logout")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        new SecurityContextLogoutHandler().logout(request, response,
+                SecurityContextHolder.getContext().getAuthentication());
     }
 }

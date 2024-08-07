@@ -1,4 +1,4 @@
-package com.chateat.chatEAT.auth.login;
+package com.chateat.chatEAT.auth;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

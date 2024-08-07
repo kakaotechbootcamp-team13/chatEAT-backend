@@ -1,25 +1,31 @@
 package com.chateat.chatEAT.domain.member.service;
 
+import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
 import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
 import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
 import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
-import com.chateat.chatEAT.domain.member.response.*;
-import com.chateat.chatEAT.global.exception.BaseException;
+import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
+import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
+import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
+import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
+import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
 
 public interface MemberService {
 
-    MemberJoinResponse join(MemberJoinRequest memberJoinRequest) throws BaseException;
+    MemberJoinResponse join(MemberJoinRequest memberJoinRequest);
 
-    MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest) throws BaseException;
+    MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest);
 
-    void updatePassword(UpdatePasswordRequest updatePasswordRequest) throws BaseException;
+    void updatePassword(UpdatePasswordRequest updatePasswordRequest);
 
-    MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest) throws BaseException;
+    MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest);
 
-    MyInfoResponse myInfo() throws BaseException;
+    MyInfoResponse myInfo();
 
-    EmailCheckResponse checkEmail(String email) throws BaseException;
+    EmailCheckResponse checkEmail(String email);
 
-    boolean checkNickname(String nickname) throws BaseException;
+    boolean checkNickname(String nickname);
+
+    Member findMember(Long id);
 }
