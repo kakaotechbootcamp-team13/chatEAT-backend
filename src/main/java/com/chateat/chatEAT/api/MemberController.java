@@ -11,15 +11,11 @@ import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
 import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
 import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
 import com.chateat.chatEAT.domain.member.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -83,12 +79,5 @@ public class MemberController {
     public ResponseEntity<Boolean> checkNickname(@PathVariable("nickname") String nickname) {
         boolean result = memberService.checkNickname(nickname);
         return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/logout")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        new SecurityContextLogoutHandler().logout(request, response,
-                SecurityContextHolder.getContext().getAuthentication());
     }
 }
