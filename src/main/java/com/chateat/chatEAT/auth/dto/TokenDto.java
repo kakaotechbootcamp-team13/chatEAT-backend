@@ -1,14 +1,18 @@
 package com.chateat.chatEAT.auth.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenDto {
-    private final String grantType;
-    private final String authorizationType;
-    private final String accessToken;
-    private final String refreshToken;
-    private final Long accessTokenExpiresIn;
+    private String grantType;
+    private String authorizationType;
+    private String accessToken;
+    private String refreshToken;
+    private Long accessTokenExpiresIn;
 }

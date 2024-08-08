@@ -20,8 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,26 +66,29 @@ public class JwtTokenProvider {
     }
 
     public TokenDto generateTokenDto(CustomUserDetails customUserDetails) {
-        log.info("GenerateTokenDto execute customUserDetails : {}", customUserDetails);
+        log.info("GenerateTokenDto execute customUserDetails : {} {} {} {} {}", customUserDetails.getId(),
+                customUserDetails.getEmail(), customUserDetails.getUsername(), customUserDetails.getPassword(),
+                customUserDetails.getAuthorities());
         Date accessTokenExpirationDate = getTokenExpiration(accessTokenExpirationPeriod);
         Date refreshTokenExpirationDate = getTokenExpiration(refreshTokenExpirationPeriod);
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", customUserDetails.getRole());
+        String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
 
         String accessToken = Jwts.builder()
-                .setClaims(claims)
-                .setSubject(customUserDetails.getEmail())
+                .claim("role", role)
+                .setSubject(customUserDetails.getUsername())
                 .setExpiration(accessTokenExpirationDate)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(customUserDetails.getEmail())
+                .setSubject(customUserDetails.getUsername())
                 .setExpiration(refreshTokenExpirationDate)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .signWith(key)
                 .compact();
+
+        log.info("accessToken: {} refreshToken: {}", accessToken, refreshToken);
 
         return TokenDto.builder()
                 .grantType(BEARER)
@@ -111,7 +112,8 @@ public class JwtTokenProvider {
 
         CustomUserDetails customUserDetails = CustomUserDetails.of(
                 claims.getSubject(), authority);
-        log.info("getAuthentication Role check : {}", customUserDetails.getAuthorities().toString());
+        log.info("getAuthentication Role check : {}",
+                customUserDetails.getAuthorities().iterator().next().getAuthority());
         return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     }
 

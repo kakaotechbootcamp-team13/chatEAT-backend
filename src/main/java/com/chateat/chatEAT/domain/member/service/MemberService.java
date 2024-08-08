@@ -15,13 +15,13 @@ public interface MemberService {
 
     MemberJoinResponse join(MemberJoinRequest memberJoinRequest);
 
-    MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest);
+    MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest, String email);
 
-    void updatePassword(UpdatePasswordRequest updatePasswordRequest);
+    void updatePassword(UpdatePasswordRequest updatePasswordRequest, String email);
 
-    MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest);
+    MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest, String email);
 
-    MyInfoResponse myInfo();
+    MyInfoResponse myInfo(String email);
 
     EmailCheckResponse checkEmail(String email);
 

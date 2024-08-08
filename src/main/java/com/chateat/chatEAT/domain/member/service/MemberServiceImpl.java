@@ -1,6 +1,5 @@
 package com.chateat.chatEAT.domain.member.service;
 
-import com.chateat.chatEAT.auth.GetLoginMember;
 import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
 import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
@@ -45,8 +44,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest) {
-        String email = GetLoginMember.getLoginMemberEmail();
+    public MemberUpdateResponse update(MemberUpdateRequest memberUpdateRequest, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         if (memberRepository.findByNickname(memberUpdateRequest.newNickname()).isPresent()) {
@@ -57,8 +55,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) {
-        String email = GetLoginMember.getLoginMemberEmail();
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
@@ -70,8 +67,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest) {
-        String email = GetLoginMember.getLoginMemberEmail();
+    public MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
@@ -84,8 +80,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MyInfoResponse myInfo() {
-        String email = GetLoginMember.getLoginMemberEmail();
+    public MyInfoResponse myInfo(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         return MyInfoResponse.of(member);
@@ -98,7 +93,9 @@ public class MemberServiceImpl implements MemberService {
         if (check) {
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-            socialType = member.getSocialType().toString();
+            if (member.getSocialType() != null) {
+                socialType = member.getSocialType().toString();
+            }
         }
         return EmailCheckResponse.of(check, socialType);
     }

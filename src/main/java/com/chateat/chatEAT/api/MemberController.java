@@ -1,5 +1,6 @@
 package com.chateat.chatEAT.api;
 
+import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
 import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
 import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
 import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,29 +44,32 @@ public class MemberController {
 
     @PatchMapping("/update")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MemberUpdateResponse> update(@RequestBody final MemberUpdateRequest request) {
-        MemberUpdateResponse response = memberService.update(request);
+    public ResponseEntity<MemberUpdateResponse> update(@AuthenticationPrincipal CustomUserDetails user,
+                                                       @RequestBody final MemberUpdateRequest request) {
+        MemberUpdateResponse response = memberService.update(request, user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PatchMapping("/update-password")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<Void> updatePassword(@RequestBody final UpdatePasswordRequest request) {
-        memberService.updatePassword(request);
+    public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal CustomUserDetails user,
+                                               @RequestBody final UpdatePasswordRequest request) {
+        memberService.updatePassword(request, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/withdraw")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MemberWithdrawResponse> withdraw(@RequestBody final MemberWithdrawRequest request) {
-        MemberWithdrawResponse response = memberService.withdraw(request);
+    public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal CustomUserDetails user,
+                                                           @RequestBody final MemberWithdrawRequest request) {
+        MemberWithdrawResponse response = memberService.withdraw(request, user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/myInfo")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MyInfoResponse> myInfo() {
-        MyInfoResponse response = memberService.myInfo();
+    public ResponseEntity<MyInfoResponse> myInfo(@AuthenticationPrincipal CustomUserDetails user) {
+        MyInfoResponse response = memberService.myInfo(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

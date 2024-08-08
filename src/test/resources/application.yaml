@@ -8,15 +8,15 @@ spring:
     username: ${H2_USERNAME}
     password: ${H2_PASSWORD}
 
+  h2:
+    console:
+      enabled: true
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-        show_sql: true
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}
@@ -25,7 +25,7 @@ jwt:
 
   refresh:
     expiration: 1209600000 #2주
-    
+
 logging:
   level:
     org:

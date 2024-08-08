@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authentication) throws IOException, ServletException {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        log.info("Successful authentication for email: {}", userDetails.getEmail());
+        log.info("Successful authentication for email: {}", userDetails.getUsername());
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
@@ -62,6 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtTokenProvider.refreshTokenSetHeader(encryptedRefreshToken, response);
 
         Member member = memberService.findMember(userDetails.getId());
+        log.info("Find member: {}", member.getEmail());
 
         Responder.loginSuccessResponse(response, member);
 
