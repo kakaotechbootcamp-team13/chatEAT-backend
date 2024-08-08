@@ -58,7 +58,9 @@ public class SecurityConfig {
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/login", "/auth/reissue", "/members/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/reissue", "/members/**", "/swagger-ui/**",
+                                "/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .logout(logout -> logout.deleteCookies("JSESSIONID"));
 
