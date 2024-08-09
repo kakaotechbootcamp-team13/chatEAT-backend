@@ -1,0 +1,38 @@
+package com.chateat.chatEAT.auth.controller;
+
+import com.chateat.chatEAT.auth.jwt.JwtTokenProvider;
+import com.chateat.chatEAT.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
+    private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @PatchMapping("/reissue")
+    public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
+        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshToken(request);
+        String newAccessToken = authService.reissueAccessToken(encryptedRefreshToken);
+        jwtTokenProvider.accessTokenSetHeader(newAccessToken, response);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshToken(request);
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        authService.logout(encryptedRefreshToken, accessToken);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
