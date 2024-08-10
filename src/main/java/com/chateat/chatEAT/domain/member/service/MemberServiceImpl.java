@@ -39,6 +39,10 @@ public class MemberServiceImpl implements MemberService {
             throw new BusinessLogicException(ExceptionCode.ALREADY_EXIST_EMAIL);
         }
 
+        if (memberRepository.findByNickname(memberJoinRequest.nickname()).isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.ALREADY_EXIST_NICKNAME);
+        }
+
         memberRepository.save(member);
         return MemberJoinResponse.of(member);
     }

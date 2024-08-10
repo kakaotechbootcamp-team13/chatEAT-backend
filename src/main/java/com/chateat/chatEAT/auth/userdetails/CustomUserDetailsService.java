@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(this::createUserDetails)
                 .orElseThrow(() -> {
                     log.debug("loadUserByUsername exception occur email {}", email);
-                    return new BusinessLogicException(ExceptionCode.NOT_FOUND_MEMBER);
+                    return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
 
