@@ -22,7 +22,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Collection<? extends GrantedAuthority> authoritiesCollection = authentication.getAuthorities();
         log.info("Authentication successful (By Success Handler)");
         log.info("ID : {}", authentication.getName());
-        log.info("ID : {}", authentication.getPrincipal());
         log.info("Roles : {}", authoritiesCollection.toString());
     }
 }

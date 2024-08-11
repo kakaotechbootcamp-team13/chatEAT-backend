@@ -13,6 +13,7 @@ public enum ExceptionCode {
     NOT_EXIST_ROLE(400, "유저의 권한이 존재하지 않습니다."),
     WRONG_PASSWORD(400, "비밀번호가 올바르지 않습니다."),
     LOCKED_MEMBER(403, "비활성화된 계정입니다."),
+    NOT_SOCIAL_MEMBER(404, "소셜 로그인 회원이 아닙니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

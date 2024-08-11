@@ -1,7 +1,6 @@
 package com.chateat.chatEAT.auth.handler;
 
 import com.chateat.chatEAT.auth.utils.Responder;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException, ServletException {
+                                        AuthenticationException exception) throws IOException {
         log.error("Authentication failure : {}", exception.getMessage());
         Responder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
     }

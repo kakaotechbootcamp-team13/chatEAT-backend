@@ -2,7 +2,7 @@ package com.chateat.chatEAT.auth.service;
 
 import com.chateat.chatEAT.auth.dto.TokenDto;
 import com.chateat.chatEAT.auth.jwt.JwtTokenProvider;
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.config.AES128Config;
 import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
@@ -35,8 +35,8 @@ public class AuthService {
 
         if (redisService.checkExistsValue(redisRefreshToken) && refreshToken.equals(redisRefreshToken)) {
             Member findMember = this.findMemberByEmail(email);
-            CustomUserDetails userDetails = CustomUserDetails.of(findMember);
-            TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+            PrincipalDetails principalDetails = PrincipalDetails.of(findMember);
+            TokenDto tokenDto = jwtTokenProvider.generateTokenDto(principalDetails);
             String newAccessToken = tokenDto.getAccessToken();
             long refreshTokenExpirationMillis = jwtTokenProvider.getRefreshTokenExpirationPeriod();
             redisService.setValues(refreshToken, newAccessToken,
