@@ -20,9 +20,6 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
-    mongodb:
-      uri: mongodb://localhost:27017/chateat_db
-
 jwt:
   secretKey: ${JWT_SECRET_KEY}
   access:
