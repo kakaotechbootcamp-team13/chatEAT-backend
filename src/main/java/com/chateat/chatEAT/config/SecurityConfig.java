@@ -58,11 +58,14 @@ public class SecurityConfig {
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/login", "/auth/reissue", "/members/**", "/swagger-ui/**",
+                        .requestMatchers("/", "/members/join", "/auth/login", "/auth/reissue",
+                                "/members/email-check/**",
+                                "members/nickname-check/**", "/swagger-ui/**",
                                 "/api-docs/**")
                         .permitAll()
                         .anyRequest().authenticated())
-                .logout(logout -> logout.deleteCookies("JSESSIONID"));
+                .logout(logout -> logout.deleteCookies("JSESSIONID")
+                        .logoutUrl("/auth/logout"));
 
         return http.build();
     }
