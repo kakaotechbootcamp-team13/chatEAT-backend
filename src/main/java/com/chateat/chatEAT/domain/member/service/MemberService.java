@@ -27,5 +27,9 @@ public interface MemberService {
 
     boolean checkNickname(String nickname);
 
+//    void memberBlock(String email);
+//
+//    void memberUnblock(String email);
+
     Member findMember(Long id);
 }

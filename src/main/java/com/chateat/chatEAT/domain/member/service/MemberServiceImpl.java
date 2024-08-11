@@ -109,6 +109,20 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByNickname(nickname).isPresent();
     }
 
+//    @Override
+//    public void memberBlock(String email) {
+//        Member member = memberRepository.findByEmail(email)
+//                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+//        member.blockMember();
+//    }
+//
+//    @Override
+//    public void memberUnblock(String email) {
+//        Member member = memberRepository.findByEmail(email)
+//                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+//        member.unblockMember();
+//    }
+
     @Transactional(readOnly = true)
     public Member findMember(Long id) {
         return memberRepository.findById(id)

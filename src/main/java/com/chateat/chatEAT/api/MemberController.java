@@ -80,4 +80,18 @@ public class MemberController {
         boolean result = memberService.checkNickname(nickname);
         return ResponseEntity.ok(result);
     }
+
+//    @PatchMapping("/blockMember") // 나중에 Admin Controller로 이동
+////    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> blockMember(@RequestBody final MemberBlockRequest request) {
+//        memberService.memberBlock(request.email());
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PatchMapping("/unblockMember") // 나중에 Admin Controller로 이동
+////    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> unblockMember(@RequestBody final MemberBlockRequest request) {
+//        memberService.memberUnblock(request.email());
+//        return ResponseEntity.ok().build();
+//    }
 }
