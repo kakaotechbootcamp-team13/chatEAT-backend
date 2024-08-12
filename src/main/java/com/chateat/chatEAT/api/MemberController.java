@@ -1,15 +1,17 @@
 package com.chateat.chatEAT.api;
 
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
 import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
 import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
+import com.chateat.chatEAT.domain.member.request.OAuth2JoinRequest;
 import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
 import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
 import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
 import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
 import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
 import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
+import com.chateat.chatEAT.domain.member.response.OAuth2JoinResponse;
 import com.chateat.chatEAT.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,7 +42,7 @@ public class MemberController {
 
     @PatchMapping("/update")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MemberUpdateResponse> update(@AuthenticationPrincipal CustomUserDetails user,
+    public ResponseEntity<MemberUpdateResponse> update(@AuthenticationPrincipal PrincipalDetails user,
                                                        @RequestBody final MemberUpdateRequest request) {
         MemberUpdateResponse response = memberService.update(request, user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -48,7 +50,7 @@ public class MemberController {
 
     @PatchMapping("/update-password")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal CustomUserDetails user,
+    public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal PrincipalDetails user,
                                                @RequestBody final UpdatePasswordRequest request) {
         memberService.updatePassword(request, user.getUsername());
         return ResponseEntity.ok().build();
@@ -56,15 +58,22 @@ public class MemberController {
 
     @DeleteMapping("/withdraw")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal CustomUserDetails user,
+    public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal PrincipalDetails user,
                                                            @RequestBody final MemberWithdrawRequest request) {
         MemberWithdrawResponse response = memberService.withdraw(request, user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @DeleteMapping("/oauth2/withdraw")
+    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal PrincipalDetails user) {
+        MemberWithdrawResponse response = memberService.oauth2Withdraw(user.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/myInfo")
     @PreAuthorize("hasRole('USER'||'ADMIN')")
-    public ResponseEntity<MyInfoResponse> myInfo(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<MyInfoResponse> myInfo(@AuthenticationPrincipal PrincipalDetails user) {
         MyInfoResponse response = memberService.myInfo(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -80,4 +89,25 @@ public class MemberController {
         boolean result = memberService.checkNickname(nickname);
         return ResponseEntity.ok(result);
     }
+
+    @PatchMapping("/oauth2/update")
+    @PreAuthorize("hasRole('GUEST'||'ADMIN')")
+    public ResponseEntity<OAuth2JoinResponse> oAuth2Join(@RequestBody final OAuth2JoinRequest request) {
+        OAuth2JoinResponse response = memberService.oauth2Join(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+//    @PatchMapping("/blockMember") // 나중에 Admin Controller로 이동
+////    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> blockMember(@RequestBody final MemberBlockRequest request) {
+//        memberService.memberBlock(request.email());
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PatchMapping("/unblockMember") // 나중에 Admin Controller로 이동
+////    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> unblockMember(@RequestBody final MemberBlockRequest request) {
+//        memberService.memberUnblock(request.email());
+//        return ResponseEntity.ok().build();
+//    }
 }

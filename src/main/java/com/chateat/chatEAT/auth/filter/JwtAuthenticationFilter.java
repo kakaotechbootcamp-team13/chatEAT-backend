@@ -3,7 +3,7 @@ package com.chateat.chatEAT.auth.filter;
 import com.chateat.chatEAT.auth.dto.AuthDto.LoginDto;
 import com.chateat.chatEAT.auth.dto.TokenDto;
 import com.chateat.chatEAT.auth.jwt.JwtTokenProvider;
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.auth.utils.Responder;
 import com.chateat.chatEAT.config.AES128Config;
 import com.chateat.chatEAT.domain.member.Member;
@@ -51,9 +51,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authentication) throws IOException, ServletException {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        log.info("Successful authentication for email: {}", userDetails.getUsername());
-        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(userDetails);
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        log.info("Successful authentication for email: {}", principalDetails.getUsername());
+        TokenDto tokenDto = jwtTokenProvider.generateTokenDto(principalDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtTokenProvider.accessTokenSetHeader(accessToken, response);
         jwtTokenProvider.refreshTokenSetHeader(encryptedRefreshToken, response);
 
-        Member member = memberService.findMember(userDetails.getId());
+        Member member = memberService.findMember(principalDetails.getId());
         log.info("Find member: {}", member.getEmail());
 
         Responder.loginSuccessResponse(response, member);

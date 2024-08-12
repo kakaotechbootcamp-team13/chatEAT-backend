@@ -18,18 +18,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                         Authentication authentication) {
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//        String email = userDetails.getEmail();
-//        memberRepository.findByEmail(email)
-//                .ifPresent(member -> {
-//                    if (member.isBlocked()) {
-//                        throw new BusinessLogicException(ExceptionCode.LOCKED_MEMBER);
-//                    }
-//                });
+
         Collection<? extends GrantedAuthority> authoritiesCollection = authentication.getAuthorities();
         log.info("Authentication successful (By Success Handler)");
         log.info("ID : {}", authentication.getName());
-        log.info("ID : {}", authentication.getPrincipal());
         log.info("Roles : {}", authoritiesCollection.toString());
     }
 }

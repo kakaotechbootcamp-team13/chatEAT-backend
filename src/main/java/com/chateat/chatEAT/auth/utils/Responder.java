@@ -29,13 +29,13 @@ public class Responder {
     public static void loginSuccessResponse(HttpServletResponse response, Member member) throws IOException {
         Gson gson = new Gson();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        LoginResponse lgoinResponse = LoginResponse.builder()
+        LoginResponse loginResponse = LoginResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .role(member.getRole().getKey())
                 .build();
 
-        response.getWriter().write(gson.toJson(new SingleResponseDto<>(lgoinResponse), SingleResponseDto.class));
+        response.getWriter().write(gson.toJson(new SingleResponseDto<>(loginResponse), SingleResponseDto.class));
     }
 }

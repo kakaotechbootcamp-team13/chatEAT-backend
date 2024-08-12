@@ -1,4 +1,4 @@
-package com.chateat.chatEAT.auth.userdetails;
+package com.chateat.chatEAT.auth.principaldetails;
 
 import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
@@ -16,21 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class PrincipalDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.info("loadUserByUsername execute, email {}", email);
         return memberRepository.findByEmail(email)
-                .map(this::createUserDetails)
+                .map(this::createPrincipalDetails)
                 .orElseThrow(() -> {
                     log.debug("loadUserByUsername exception occur email {}", email);
                     return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
     }
 
-    private UserDetails createUserDetails(Member member) {
-        return CustomUserDetails.of(member);
+    private UserDetails createPrincipalDetails(Member member) {
+        return PrincipalDetails.of(member);
     }
 }
