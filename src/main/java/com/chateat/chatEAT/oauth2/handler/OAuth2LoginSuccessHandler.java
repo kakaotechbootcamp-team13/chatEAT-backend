@@ -15,8 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -31,14 +33,17 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final RedisService redisService;
     private static final String BEARER_PREFIX = "Bearer ";
 
+    @Value("${serverUri.frontendServer}")
+    private String frontendServer;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         log.info("OAuth2 로그인이 성공하였습니다. Handler 적용");
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        Role role = principalDetails.getRole();
+        String role = principalDetails.role();
 
-        if (role == Role.GUEST) {
+        if (Objects.equals(role, Role.GUEST.getKey())) {
             handleGuestLogin(request, response, principalDetails);
         } else {
             handleUserLogin(request, response, principalDetails);
@@ -59,8 +64,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         long refreshTokenExpirationPeriod = jwtTokenProvider.getRefreshTokenExpirationPeriod();
         redisService.setValues(member.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
 
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/members/oauth2/join")
+        String targetUrl = UriComponentsBuilder.fromUriString(frontendServer + "/members/oauth2/join")
                 .queryParam("email", principalDetails.getUsername())
+                .queryParam("role", principalDetails.role())
                 .queryParam("accessToken", BEARER_PREFIX + accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build()
@@ -83,7 +89,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         long refreshTokenExpirationPeriod = jwtTokenProvider.getRefreshTokenExpirationPeriod();
         redisService.setValues(member.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
 
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/login")
+        String targetUrl = UriComponentsBuilder.fromUriString(frontendServer + "/login")
                 .queryParam("email", member.getEmail())
                 .queryParam("nickname", member.getNickname())
                 .queryParam("accessToken", BEARER_PREFIX + accessToken)

@@ -74,6 +74,10 @@ public class PrincipalDetails extends Member implements UserDetails, OAuth2User 
         return this.password;
     }
 
+    public String role() {
+        return this.role;
+    }
+
     @Override
     public Long getId() {
         return this.id;

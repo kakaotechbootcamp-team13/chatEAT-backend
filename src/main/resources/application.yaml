@@ -49,6 +49,8 @@ jwt:
   refresh:
     expiration: 1209600000 #2주
 
+serverUri:
+  frontendServer: ${FRONT_END_SERVER}
 
 logging:
   level:

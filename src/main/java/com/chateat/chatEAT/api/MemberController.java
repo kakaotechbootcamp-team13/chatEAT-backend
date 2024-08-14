@@ -90,7 +90,7 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/oauth2/update")
+    @PatchMapping("/oauth2/join")
     @PreAuthorize("hasRole('GUEST'||'ADMIN')")
     public ResponseEntity<OAuth2JoinResponse> oAuth2Join(@RequestBody final OAuth2JoinRequest request) {
         OAuth2JoinResponse response = memberService.oauth2Join(request);
