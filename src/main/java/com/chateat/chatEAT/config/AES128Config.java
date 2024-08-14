@@ -6,7 +6,7 @@ import jakarta.annotation.PostConstruct;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -33,11 +33,10 @@ public class AES128Config {
     @PostConstruct
     public void init() throws NoSuchPaddingException, NoSuchAlgorithmException {
         validation(secretKey);
-        SecureRandom secureRandom = new SecureRandom();
         byte[] keyBytes = secretKey.getBytes(ENCODING_TYPE);
-        secureRandom.nextBytes(keyBytes);
+        byte[] iv = Arrays.copyOf(keyBytes, 16);
         secretKeySpec = new SecretKeySpec(keyBytes, "AES");
-        ivParameterSpec = new IvParameterSpec(keyBytes);
+        ivParameterSpec = new IvParameterSpec(iv);
         cipher = Cipher.getInstance(INSTANCE_TYPE);
     }
 
@@ -45,27 +44,33 @@ public class AES128Config {
     public String encryptAes(String plaintext) {
         try {
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
-            byte[] encryted = cipher.doFinal(plaintext.getBytes(ENCODING_TYPE));
-            return new String(Base64.getEncoder().encode(encryted), ENCODING_TYPE);
+            byte[] encrypted = cipher.doFinal(plaintext.getBytes(ENCODING_TYPE));
+            return Base64.getUrlEncoder().encodeToString(encrypted); // URL-safe Base64 인코딩
         } catch (Exception e) {
-            log.debug("decryptAes.encryptAes exception occur plaintext: {}", plaintext);
+            log.debug("AES128Config.encryptAes exception occur plaintext: {}", plaintext);
             throw new BusinessLogicException(ExceptionCode.ENCRYPTION_FAILED);
         }
     }
 
     // AES 복호화
-    public String decryptAes(String plaintext) {
+    public String decryptAes(String ciphertext) {
         try {
+            log.debug("Starting decryption, ciphertext before decode: {}", ciphertext);
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-            byte[] decoded = Base64.getDecoder().decode(plaintext.getBytes(ENCODING_TYPE));
+            byte[] decoded = Base64.getUrlDecoder().decode(ciphertext); // URL-safe Base64 디코딩
+            log.debug("Decoded bytes: {}", Arrays.toString(decoded));
             return new String(cipher.doFinal(decoded), ENCODING_TYPE);
+        } catch (IllegalArgumentException e) {
+            log.error("Failed to decode Base64: {}", e.getMessage());
+            throw new BusinessLogicException(ExceptionCode.DECRYPTION_FAILED);
         } catch (Exception e) {
-            log.debug("AES128Config.decryptAes exception occur plaintext: {}", plaintext);
+            log.debug("AES128Config.decryptAes exception occur ciphertext: {}", ciphertext);
+            log.error(e.getMessage(), e);
             throw new BusinessLogicException(ExceptionCode.DECRYPTION_FAILED);
         }
     }
 
-    public void validation(String secretKey) {
+    private void validation(String secretKey) {
         Optional.ofNullable(secretKey)
                 .filter(Predicate.not(String::isBlank))
                 .filter(Predicate.not(key -> key.length() != 16))

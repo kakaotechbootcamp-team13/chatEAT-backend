@@ -119,7 +119,11 @@ public class JwtTokenProvider {
     public boolean validateToken(String token, HttpServletResponse response) {
         log.info("ValidateToken execute, token = {}", token);
         try {
-            parseClaims(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(this.key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token");
             log.trace("Invalid JWT token trace = { }", e);
@@ -136,7 +140,7 @@ public class JwtTokenProvider {
             log.trace("JWT claims string is empty trace = { }", e);
             Responder.sendErrorResponse(response, ExceptionCode.TOKEN_ILLEGAL_ARGUMENT);
         }
-        return true;
+        return false;
     }
 
     private Date getTokenExpiration(long expirationPeriod) {

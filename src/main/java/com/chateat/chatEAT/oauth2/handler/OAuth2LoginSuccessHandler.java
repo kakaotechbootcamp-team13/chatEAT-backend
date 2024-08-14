@@ -3,6 +3,7 @@ package com.chateat.chatEAT.oauth2.handler;
 import com.chateat.chatEAT.auth.dto.TokenDto;
 import com.chateat.chatEAT.auth.jwt.JwtTokenProvider;
 import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
+import com.chateat.chatEAT.config.AES128Config;
 import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.Role;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
@@ -30,6 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+    private final AES128Config aes128Config;
     private final RedisService redisService;
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -85,15 +87,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(principalDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         long refreshTokenExpirationPeriod = jwtTokenProvider.getRefreshTokenExpirationPeriod();
         redisService.setValues(member.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
 
-        String targetUrl = UriComponentsBuilder.fromUriString(frontendServer + "/login")
+        String targetUrl = UriComponentsBuilder.fromUriString(frontendServer + "/kakao-login")
                 .queryParam("email", member.getEmail())
                 .queryParam("nickname", member.getNickname())
                 .queryParam("accessToken", BEARER_PREFIX + accessToken)
-                .queryParam("refreshToken", refreshToken)
+                .queryParam("refreshToken", encryptedRefreshToken)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();
