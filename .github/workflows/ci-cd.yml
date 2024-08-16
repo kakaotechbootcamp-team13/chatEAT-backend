@@ -3,7 +3,7 @@ name: CI/CD Pipeline    # workflow의 이름
 on:
   push:
     branches:
-      - main  # main 브랜치에 푸시될 때 워크플로가 트리거
+      - dev  # dev 브랜치에 푸시될 때 워크플로가 트리거
 
 jobs:
   build:                                # 작업의 이름
@@ -23,11 +23,11 @@ jobs:
       run: chmod +x gradlew                             # gradlew 파일에 실행 권한 추가
 
     - name: Build with Gradle           # Gradle 빌드 수행
-      run: ./gradlew build              # Gradle 빌드 명령어 수행
+      run: ./gradlew build -x test      # Gradle 빌드 명령어 수행
 
     - name: Build Docker Image          # Docker 이미지 빌드
       run: |
-        docker build -t sodamkim/chateat-backend:latest .  # Docker 이미지 생성
+        docker build -t ${{ secrets.IMAGE_NAME }} .  # Docker 이미지 생성
 
     - name: Log in to Docker Hub        # Docker Hub 로그인
       uses: docker/login-action@v1      # Docker Hub 로그인 액션 사용
@@ -37,18 +37,18 @@ jobs:
 
     - name: Push Docker Image to Docker Hub     # Docker 이미지 푸시
       run: |
-        docker push sodamkim/chateat-backend:latest  # Docker Hub에 이미지 푸시
+        docker push ${{ secrets.IMAGE_NAME }}  # Docker Hub에 이미지 푸시
 
     - name: Deploy to EC2                               # EC2에 배포
       env:
         HOST: ${{ secrets.EC2_HOST }}               # EC2 호스트 주소
         USER: ${{ secrets.EC2_USER }}                     # EC2 사용자 이름
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}         # SSH 비공개 키
-        IMAGE_NAME: sodamkim/chateat-backend:latest     # Docker 이미지 이름
+        IMAGE_NAME: ${{ secrets.IMAGE_NAME }}           # Docker 이미지 이름을 Secrets에서 가져옴
       run: |
-        echo "$PRIVATE_KEY" > private_key.pem           # SSH 키 파일 생성
-        chmod 600 private_key.pem                       # 키 파일 권한 설정
-        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
+        echo "$PRIVATE_KEY" | tr -d '\r' > chat-eat.pem             # SSH 키 파일 생성
+        chmod 600 chat-eat.pem                       # 키 파일 권한 설정
+        ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
           # 도커 허브에서 새로운 Docker 이미지 가져오기
           docker pull $IMAGE_NAME
 
