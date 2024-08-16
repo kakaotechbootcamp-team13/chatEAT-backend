@@ -2,22 +2,15 @@ package com.chateat.chatEAT.domain.member.service;
 
 import com.chateat.chatEAT.domain.member.Member;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
-import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
-import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
-import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
-import com.chateat.chatEAT.domain.member.request.OAuth2JoinRequest;
-import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
-import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
-import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
-import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
-import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
-import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
-import com.chateat.chatEAT.domain.member.response.OAuth2JoinResponse;
+import com.chateat.chatEAT.domain.member.request.*;
+import com.chateat.chatEAT.domain.member.response.*;
 import com.chateat.chatEAT.global.exception.BusinessLogicException;
 import com.chateat.chatEAT.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,6 +125,22 @@ public class MemberServiceImpl implements MemberService {
         }
         memberRepository.delete(member);
         return MemberWithdrawResponse.of(email);
+    }
+
+    @Override
+    public AuthorizeRoleResponse changRole(AuthorizeRoleRequest request, Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        switch (request.role()) {
+            case "ADMIN" -> member.authorizeAdmin();
+            case "USER" -> member.authorizeUser();
+            default -> throw new BusinessLogicException(ExceptionCode.WRONG_ROLE);
+        }
+        return AuthorizeRoleResponse.of(member.getEmail(), String.valueOf(member.getRole()));
+    }
+
+    @Override
+    public Page<MemberListResponse> findAllMembers(Pageable pageable) {
+        return memberRepository.findAll(pageable).map(MemberListResponse::of);
     }
 
 //    @Override
