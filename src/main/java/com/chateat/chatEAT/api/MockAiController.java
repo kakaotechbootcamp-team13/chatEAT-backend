@@ -11,7 +11,6 @@ public class MockAiController {
 
     @PostMapping("/mock-ai")
     public AiResponse mockAiEndpoint(@RequestBody AiRequest request) {
-        System.out.println("Received prompt: " + request.getPrompt());
         AiResponse response = new AiResponse();
         response.setMessage("Mock response for: " + request.getPrompt());
         return response;
