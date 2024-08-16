@@ -2,6 +2,7 @@ package com.chateat.chatEAT.domain.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,17 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class AIService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     @Value("${API_URL}")
     private String apiUrl;
-    
-    public AIService() {
-        this.restTemplate = new RestTemplate();
-        this.objectMapper = new ObjectMapper();
-    }
     
     public String getAIResponse(String userMessage) {
         HttpHeaders headers = new HttpHeaders();
