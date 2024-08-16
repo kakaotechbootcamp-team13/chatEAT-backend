@@ -46,9 +46,9 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}         # SSH 비공개 키
         IMAGE_NAME: sodamkim/chateat-backend:latest     # Docker 이미지 이름
       run: |
-        echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem             # SSH 키 파일 생성
-        chmod 600 private_key.pem                       # 키 파일 권한 설정
-        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
+        echo "$PRIVATE_KEY" | tr -d '\r' > chat-eat.pem             # SSH 키 파일 생성
+        chmod 600 chat-eat.pem                       # 키 파일 권한 설정
+        ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
           # 도커 허브에서 새로운 Docker 이미지 가져오기
           docker pull $IMAGE_NAME
 
