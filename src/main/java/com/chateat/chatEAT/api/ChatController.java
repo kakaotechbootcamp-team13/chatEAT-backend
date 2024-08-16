@@ -6,6 +6,7 @@ import com.chateat.chatEAT.domain.chat.OutputChat;
 import com.chateat.chatEAT.domain.chat.service.AIService;
 import com.chateat.chatEAT.domain.chat.service.ChatService;
 import com.chateat.chatEAT.domain.chat.service.OutputChatService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +15,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
     private final OutputChatService outputChatService;
     private final AIService aiService;
-
-    public ChatController(ChatService chatService, OutputChatService outputChatService, AIService aiService) {
-        this.chatService = chatService;
-        this.outputChatService = outputChatService;
-        this.aiService = aiService;
-    }
 
     @PostMapping("/chat")
     public OutputChat saveChat(@RequestBody Map<String, String> request, @AuthenticationPrincipal PrincipalDetails user) {
