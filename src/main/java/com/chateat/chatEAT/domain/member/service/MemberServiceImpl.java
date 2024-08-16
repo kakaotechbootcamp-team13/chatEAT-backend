@@ -139,8 +139,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Page<MemberListResponse> findAllMembers(Pageable pageable) {
-        return memberRepository.findAll(pageable).map(MemberListResponse::of);
+    public Page<MemberListPageResponse> findAllMembers(Pageable pageable) {
+        return memberRepository.findAll(pageable).map(MemberListPageResponse::of);
     }
 
 //    @Override

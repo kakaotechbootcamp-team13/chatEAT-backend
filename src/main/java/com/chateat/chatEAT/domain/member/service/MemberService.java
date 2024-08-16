@@ -32,7 +32,7 @@ public interface MemberService {
 
     AuthorizeRoleResponse changRole(AuthorizeRoleRequest request, Long id);
 
-    Page<MemberListResponse> findAllMembers(Pageable pageable);
+    Page<MemberListPageResponse> findAllMembers(Pageable pageable);
 
     Member findMember(Long id);
 }
