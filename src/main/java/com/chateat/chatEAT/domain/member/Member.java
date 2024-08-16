@@ -30,7 +30,6 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
@@ -46,6 +45,10 @@ public class Member {
 
     private boolean isBlocked = false;
 
+//    private int loginFailureCount;
+//
+//    private static final int MAX_LOGIN_FAILURE_COUNT = 5;
+
     public void authorizeUser() {
         this.role = Role.USER;
     }
@@ -57,6 +60,25 @@ public class Member {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+//    public void blockMember() {
+//        this.isBlocked = true;
+//    }
+//
+//    public void unblockMember() {
+//        this.isBlocked = false;
+//    }
+//
+//    public void increaseLoginFailureCount() {
+//        this.loginFailureCount++;
+//        if (this.loginFailureCount >= MAX_LOGIN_FAILURE_COUNT) {
+//            this.isBlocked = true;
+//        }
+//    }
+//
+//    public void resetLoginFailureCount() {
+//        this.loginFailureCount = 0;
+//    }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);

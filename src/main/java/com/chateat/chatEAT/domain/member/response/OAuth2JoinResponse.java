@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyInfoResponse {
+public class OAuth2JoinResponse {
 
     String email;
     String nickname;
     String socialType;
 
-    public static MyInfoResponse of(Member member) {
-        return new MyInfoResponse(member.getEmail(), member.getNickname(),
-                member.getSocialType() != null ? member.getSocialType().toString() : null);
+    public static OAuth2JoinResponse of(Member member) {
+        return new OAuth2JoinResponse(member.getEmail(), member.getNickname(), String.valueOf(member.getSocialType()));
     }
+
 }

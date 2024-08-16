@@ -7,9 +7,12 @@ import com.chateat.chatEAT.auth.handler.CustomAuthenticationEntryPoint;
 import com.chateat.chatEAT.auth.handler.LoginFailureHandler;
 import com.chateat.chatEAT.auth.handler.LoginSuccessHandler;
 import com.chateat.chatEAT.auth.jwt.JwtTokenProvider;
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetailsService;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetailsService;
 import com.chateat.chatEAT.domain.member.service.MemberService;
 import com.chateat.chatEAT.global.redis.RedisService;
+import com.chateat.chatEAT.oauth2.CustomOAuth2MemberService;
+import com.chateat.chatEAT.oauth2.handler.OAuth2LoginFailureHandler;
+import com.chateat.chatEAT.oauth2.handler.OAuth2LoginSuccessHandler;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,10 @@ public class SecurityConfig {
     private final MemberService memberService;
     private final AES128Config aes128Config;
     private final RedisService redisService;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final PrincipalDetailsService principalDetailsService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2MemberService customOAuth2MemberService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
@@ -58,11 +64,21 @@ public class SecurityConfig {
                         .accessDeniedHandler(new CustomAccessDeniedHandler()))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/**", "/auth/login", "/auth/reissue", "/members/**", "/swagger-ui/**",
-                                "/api-docs/**", "/chat/**")
+                        .requestMatchers("/", "/members/join", "/auth/login", "/auth/reissue",
+                                "/members/email-check/**",
+                                "members/nickname-check/**", "/swagger-ui/**",
+                                "/api-docs/**","/chat/**")
                         .permitAll()
                         .anyRequest().authenticated())
-                .logout(logout -> logout.deleteCookies("JSESSIONID"));
+                .oauth2Login((oauth2Login) ->
+                        oauth2Login
+                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(
+                                        customOAuth2MemberService))
+                                .successHandler(oAuth2LoginSuccessHandler)
+                                .failureHandler(oAuth2LoginFailureHandler)
+                )
+                .logout(logout -> logout.deleteCookies("JSESSIONID")
+                        .logoutUrl("/auth/logout"));
 
         return http.build();
     }
@@ -74,7 +90,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader("Authorization");
-        configuration.addExposedHeader("Authorization-Refresh");
+        configuration.addExposedHeader("Refresh");
         configuration.addAllowedHeader("*");
         configuration.setMaxAge(3600L);
 
@@ -88,14 +104,14 @@ public class SecurityConfig {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(
                 AuthenticationManagerBuilder.class);
         authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService)
+                .userDetailsService(principalDetailsService)
                 .passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
     }
 
     public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity> {
         @Override
-        public void configure(HttpSecurity builder) throws Exception {
+        public void configure(HttpSecurity builder) {
             CharacterEncodingFilter filter = new CharacterEncodingFilter();
             filter.setEncoding("UTF-8");
             filter.setForceEncoding(true);

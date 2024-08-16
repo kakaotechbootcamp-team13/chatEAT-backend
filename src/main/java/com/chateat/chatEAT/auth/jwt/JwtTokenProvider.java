@@ -1,7 +1,7 @@
 package com.chateat.chatEAT.auth.jwt;
 
 import com.chateat.chatEAT.auth.dto.TokenDto;
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.auth.utils.Responder;
 import com.chateat.chatEAT.global.exception.ExceptionCode;
 import io.jsonwebtoken.Claims;
@@ -65,24 +65,23 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto generateTokenDto(CustomUserDetails customUserDetails) {
-        log.info("GenerateTokenDto execute customUserDetails : {} {} {} {} {}", customUserDetails.getId(),
-                customUserDetails.getEmail(), customUserDetails.getUsername(), customUserDetails.getPassword(),
-                customUserDetails.getAuthorities());
+    public TokenDto generateTokenDto(PrincipalDetails principalDetails) {
+        log.info("GenerateTokenDto execute principalDetails : {} {} {}", principalDetails.getId(),
+                principalDetails.getUsername(), principalDetails.getAuthorities());
         Date accessTokenExpirationDate = getTokenExpiration(accessTokenExpirationPeriod);
         Date refreshTokenExpirationDate = getTokenExpiration(refreshTokenExpirationPeriod);
-        String role = customUserDetails.getAuthorities().iterator().next().getAuthority();
+        String role = principalDetails.getAuthorities().iterator().next().getAuthority();
 
         String accessToken = Jwts.builder()
                 .claim("role", role)
-                .setSubject(customUserDetails.getUsername())
+                .setSubject(principalDetails.getUsername())
                 .setExpiration(accessTokenExpirationDate)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(customUserDetails.getUsername())
+                .setSubject(principalDetails.getUsername())
                 .setExpiration(refreshTokenExpirationDate)
                 .setIssuedAt(Calendar.getInstance().getTime())
                 .signWith(key)
@@ -110,17 +109,21 @@ public class JwtTokenProvider {
 
         String authority = claims.get("role").toString();
 
-        CustomUserDetails customUserDetails = CustomUserDetails.of(
+        PrincipalDetails principalDetails = PrincipalDetails.of(
                 claims.getSubject(), authority);
         log.info("getAuthentication Role check : {}",
-                customUserDetails.getAuthorities().iterator().next().getAuthority());
-        return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                principalDetails.getAuthorities().iterator().next().getAuthority());
+        return new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
     }
 
     public boolean validateToken(String token, HttpServletResponse response) {
         log.info("ValidateToken execute, token = {}", token);
         try {
-            parseClaims(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(this.key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token");
             log.trace("Invalid JWT token trace = { }", e);
@@ -137,7 +140,7 @@ public class JwtTokenProvider {
             log.trace("JWT claims string is empty trace = { }", e);
             Responder.sendErrorResponse(response, ExceptionCode.TOKEN_ILLEGAL_ARGUMENT);
         }
-        return true;
+        return false;
     }
 
     private Date getTokenExpiration(long expirationPeriod) {

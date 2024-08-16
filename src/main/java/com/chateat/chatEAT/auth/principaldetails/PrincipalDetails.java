@@ -1,45 +1,62 @@
-package com.chateat.chatEAT.auth.userdetails;
+package com.chateat.chatEAT.auth.principaldetails;
 
 import com.chateat.chatEAT.auth.utils.CustomAuthorityUtils;
 import com.chateat.chatEAT.domain.member.Member;
 import java.util.List;
+import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class CustomUserDetails extends Member implements UserDetails {
+public class PrincipalDetails extends Member implements UserDetails, OAuth2User {
     private String email;
     private Long id;
     private String password;
     private String role;
+    private Map<String, Object> attributes;
 
-    public CustomUserDetails(Member member) {
+    public PrincipalDetails(Member member) {
         this.id = member.getId();
         this.email = member.getEmail();
         this.password = member.getPassword();
         this.role = member.getRole().getKey();
     }
 
-    private CustomUserDetails(String email, String role) {
+    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+        this(member);
+        this.attributes = attributes;
+    }
+
+    private PrincipalDetails(String email, String role) {
         this.email = email;
         this.role = role;
     }
 
-    private CustomUserDetails(String email, String password, String role) {
+    private PrincipalDetails(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    public static CustomUserDetails of(Member member) {
-        return new CustomUserDetails(member);
+    public static PrincipalDetails of(Member member) {
+        return new PrincipalDetails(member);
     }
 
-    public static CustomUserDetails of(String email, String role) {
-        return new CustomUserDetails(email, role);
+    public static PrincipalDetails of(Member member, Map<String, Object> attributes) {
+        return new PrincipalDetails(member, attributes);
     }
 
-    public static CustomUserDetails of(String email, String password, String role) {
-        return new CustomUserDetails(email, password, role);
+    public static PrincipalDetails of(String email, String role) {
+        return new PrincipalDetails(email, role);
+    }
+
+    public static PrincipalDetails of(String email, String password, String role) {
+        return new PrincipalDetails(email, password, role);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
     }
 
     @Override
@@ -55,6 +72,10 @@ public class CustomUserDetails extends Member implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    public String role() {
+        return this.role;
     }
 
     @Override
@@ -80,5 +101,10 @@ public class CustomUserDetails extends Member implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return "";
     }
 }

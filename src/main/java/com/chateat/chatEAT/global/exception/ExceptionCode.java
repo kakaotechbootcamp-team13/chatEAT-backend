@@ -8,12 +8,12 @@ public enum ExceptionCode {
     MEMBER_ROLE_DOES_NOT_EXISTS(404, "회원의 권한이 존재하지 않습니다."),
     MEMBER_EXISTS(404, "이미 존재하는 회원입니다."),
     AUTH_CODE_IS_NOT_SAME(404, "인증 번호가 일치하지 않습니다."),
-    NOT_FOUND_MEMBER(404, "일치하는 회원이 존재하지 않습니다."),
     ALREADY_EXIST_EMAIL(409, "이미 존재하는 이메일입니다."),
     ALREADY_EXIST_NICKNAME(409, "이미 존재하는 닉네임입니다."),
     NOT_EXIST_ROLE(400, "유저의 권한이 존재하지 않습니다."),
     WRONG_PASSWORD(400, "비밀번호가 올바르지 않습니다."),
-    LOCKED_MEMBER(401, "비활성화된 계정입니다."),
+    LOCKED_MEMBER(403, "비활성화된 계정입니다."),
+    NOT_SOCIAL_MEMBER(404, "소셜 로그인 회원이 아닙니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),
