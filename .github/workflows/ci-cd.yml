@@ -3,7 +3,7 @@ name: CI/CD Pipeline    # workflow의 이름
 on:
   push:
     branches:
-      - main  # main 브랜치에 푸시될 때 워크플로가 트리거
+      - dev  # dev 브랜치에 푸시될 때 워크플로가 트리거
 
 jobs:
   build:                                # 작업의 이름
