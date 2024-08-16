@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/members/join", "/auth/login", "/auth/reissue",
                                 "/members/email-check/**",
                                 "members/nickname-check/**", "/swagger-ui/**",
-                                "/api-docs/**")
+                                "/api-docs/**","/chat/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login((oauth2Login) ->
