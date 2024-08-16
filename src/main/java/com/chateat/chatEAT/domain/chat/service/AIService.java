@@ -2,6 +2,7 @@ package com.chateat.chatEAT.domain.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +14,9 @@ import java.util.Map;
 public class AIService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    @Value("${API_URL}")
+    private String apiUrl;
     
     public AIService() {
         this.restTemplate = new RestTemplate();
@@ -20,8 +24,6 @@ public class AIService {
     }
     
     public String getAIResponse(String userMessage) {
-        String apiUrl="http://localhost:8080/mock-ai";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

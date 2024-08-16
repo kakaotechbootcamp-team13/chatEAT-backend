@@ -1,6 +1,6 @@
 package com.chateat.chatEAT.api;
 
-import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.domain.chat.InputChat;
 import com.chateat.chatEAT.domain.chat.OutputChat;
 import com.chateat.chatEAT.domain.chat.service.AIService;
@@ -27,7 +27,7 @@ public class ChatController {
     }
 
     @PostMapping("/chat")
-    public OutputChat saveChat(@RequestBody Map<String, String> request, @AuthenticationPrincipal CustomUserDetails user) {
+    public OutputChat saveChat(@RequestBody Map<String, String> request, @AuthenticationPrincipal PrincipalDetails user) {
         String message = request.get("message");
 
         InputChat userChat = new InputChat();
