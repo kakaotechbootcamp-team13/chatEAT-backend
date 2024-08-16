@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter {
     private static final List<String> EXCLUDED_PATHS =
-            List.of("/", "/members/join", "/auth/login", "/auth/reissue");
+            List.of("/**", "/members/join", "/auth/login", "/auth/reissue", "/chat/**");
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 

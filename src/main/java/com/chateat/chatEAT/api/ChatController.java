@@ -1,49 +1,55 @@
 package com.chateat.chatEAT.api;
 
-import com.chateat.chatEAT.domain.chat.Chat;
-import com.chateat.chatEAT.domain.chat.repository.ChatRepository;
-import com.chateat.chatEAT.domain.chat.dto.ChatRequest;
-import com.chateat.chatEAT.domain.chat.dto.AiRequest;
-import com.chateat.chatEAT.domain.chat.dto.AiResponse;
-import org.springframework.http.ResponseEntity;
+import com.chateat.chatEAT.auth.userdetails.CustomUserDetails;
+import com.chateat.chatEAT.domain.chat.InputChat;
+import com.chateat.chatEAT.domain.chat.OutputChat;
+import com.chateat.chatEAT.domain.chat.service.AIService;
+import com.chateat.chatEAT.domain.chat.service.ChatService;
+import com.chateat.chatEAT.domain.chat.service.OutputChatService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping
 public class ChatController {
 
-    private final ChatRepository chatRepository;
-    private final RestTemplate restTemplate;
+    private final ChatService chatService;
+    private final OutputChatService outputChatService;
+    private final AIService aiService;
 
-    public ChatController(ChatRepository chatRepository, RestTemplate restTemplate) {
-        this.chatRepository = chatRepository;
-        this.restTemplate = restTemplate;
+    public ChatController(ChatService chatService, OutputChatService outputChatService, AIService aiService) {
+        this.chatService = chatService;
+        this.outputChatService = outputChatService;
+        this.aiService = aiService;
     }
 
-    @PostMapping
-    public ResponseEntity<String> chat(@RequestBody ChatRequest chatRequest) {
-        Chat chat = new Chat();
-        chat.setMessage(chatRequest.getMessage());
-        chat.setTimestamp(LocalDateTime.now());
+    @PostMapping("/chat")
+    public OutputChat saveChat(@RequestBody Map<String, String> request, @AuthenticationPrincipal CustomUserDetails user) {
+        String message = request.get("message");
 
-        chatRepository.save(chat);
+        InputChat userChat = new InputChat();
+        userChat.setMessage(message);
+        userChat.setTimestamp(LocalDateTime.now());
+        userChat.setEmail(user.getUsername());
+        userChat.setBotResponse(false);
+        chatService.saveChat(userChat);
+
 
         //AI API로 메시지 전송
-        AiRequest aiRequest = new AiRequest(chatRequest.getMessage());
-        AiResponse aiResponse = restTemplate.postForObject(
-                "http://localhost:8080/mock-ai", aiRequest, AiResponse.class);
+        String aiResponseMessage = aiService.getAIResponse(message);
 
         //응답 메시지 저장
-        Chat aiChat = new Chat();
-        aiChat.setMessage(aiResponse.getMessage());
+        OutputChat aiChat = new OutputChat();
+        aiChat.setMessage(aiResponseMessage);
         aiChat.setTimestamp(LocalDateTime.now());
-
-        chatRepository.save(aiChat);
+        aiChat.setEmail(user.getUsername());
+        aiChat.setBotResponse(true);
+        outputChatService.saveChat(aiChat);
 
         //응답 메시지 반환
-        return ResponseEntity.ok(aiResponse.getMessage());
+        return aiChat;
     }
 }

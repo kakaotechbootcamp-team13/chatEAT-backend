@@ -1,10 +1,14 @@
 package com.chateat.chatEAT.domain.chat.repository;
 
-import com.chateat.chatEAT.domain.chat.Chat;
+import com.chateat.chatEAT.domain.chat.InputChat;
+import com.chateat.chatEAT.domain.chat.OutputChat;
+import com.chateat.chatEAT.domain.chat.service.ChatService;
+import com.chateat.chatEAT.domain.chat.service.OutputChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.xmlunit.builder.Input;
 
 import java.time.LocalDateTime;
 
@@ -20,21 +24,40 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class ChatRepositoryTest {
 
     @Autowired
-    private ChatRepository chatRepository;
+    private ChatService chatService;
 
-    @DisplayName("Mongodb 상호작용에 성공한다.")
+    @Autowired
+    private OutputChatService outputChatService;
+
+    @DisplayName("Mongodb_intput")
     @Test
     public void testSaveChatToMongoDB() {
         // Given
-        Chat chat = new Chat();
+        InputChat chat = new InputChat();
         chat.setMessage("Hello, MongoDB!");
         chat.setTimestamp(LocalDateTime.now());
 
         // When
-        Chat savedChat = chatRepository.save(chat);
+        InputChat savedChat = chatService.saveChat(chat);
 
         // Then
         assertThat(savedChat.getId()).isNotNull(); // 저장된 후 ID가 생성되었는지 확인
-        assertThat(chatRepository.findById(savedChat.getId())).isPresent(); // 데이터가 저장되었는지 확인
+        assertThat(chatService.findById(savedChat.getId())).isPresent(); // 데이터가 저장되었는지 확인
+    }
+
+    @DisplayName("Mongodb_output")
+    @Test
+    public void testSaveOutputChatToMongoDB() {
+        // Given
+        OutputChat chat = new OutputChat();
+        chat.setMessage("Hello, MongoDB!");
+        chat.setTimestamp(LocalDateTime.now());
+
+        // When
+        OutputChat savedChat = outputChatService.saveChat(chat);
+
+        // Then
+        assertThat(savedChat.getId()).isNotNull(); // 저장된 후 ID가 생성되었는지 확인
+        assertThat(outputChatService.findById(savedChat.getId())).isPresent(); // 데이터가 저장되었는지 확인
     }
 }

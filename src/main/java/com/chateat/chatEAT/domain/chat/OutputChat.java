@@ -9,11 +9,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Document(collection="chats")
-public class Chat {
+@Document(collection="output_chats")
+public class OutputChat {
     @Id
     private String id;
     private String message;
     private LocalDateTime timestamp;
-
+    private String email;
+    private boolean isBotResponse;
 }
