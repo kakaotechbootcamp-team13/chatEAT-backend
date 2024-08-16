@@ -13,9 +13,10 @@ public class MyInfoResponse {
     String email;
     String nickname;
     String socialType;
+    String role;
 
     public static MyInfoResponse of(Member member) {
         return new MyInfoResponse(member.getEmail(), member.getNickname(),
-                member.getSocialType() != null ? member.getSocialType().toString() : null);
+                member.getSocialType() != null ? member.getSocialType().toString() : null, member.getRole().getKey());
     }
 }

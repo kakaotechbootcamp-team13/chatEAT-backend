@@ -1,17 +1,10 @@
 package com.chateat.chatEAT.domain.member.service;
 
 import com.chateat.chatEAT.domain.member.Member;
-import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
-import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
-import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
-import com.chateat.chatEAT.domain.member.request.OAuth2JoinRequest;
-import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
-import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
-import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
-import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
-import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
-import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
-import com.chateat.chatEAT.domain.member.response.OAuth2JoinResponse;
+import com.chateat.chatEAT.domain.member.request.*;
+import com.chateat.chatEAT.domain.member.response.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
 
@@ -36,6 +29,10 @@ public interface MemberService {
     OAuth2JoinResponse oauth2Join(OAuth2JoinRequest request);
 
     MemberWithdrawResponse oauth2Withdraw(String email);
+
+    AuthorizeRoleResponse changRole(AuthorizeRoleRequest request, Long id);
+
+    Page<MemberListPageResponse> findAllMembers(Pageable pageable);
 
     Member findMember(Long id);
 }
