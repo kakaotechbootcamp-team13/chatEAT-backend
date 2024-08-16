@@ -50,6 +50,7 @@ jobs:
         chmod 600 chat-eat.pem                       # 키 파일 권한 설정
         ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
           # 도커 허브에서 새로운 Docker 이미지 가져오기
+	  echo "Pulling image: $IMAGE_NAME"  # 이미지 이름 확인
           docker pull $IMAGE_NAME
 
           if [ $(docker ps -q -f name=chateat-container) ]; then
