@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberUpdateResponse {
 
-    String email;
-    String newNickname;
+    private String email;
+    private String newNickname;
 
     public static MemberUpdateResponse of(Member member) {
         return new MemberUpdateResponse(member.getEmail(), member.getNickname());

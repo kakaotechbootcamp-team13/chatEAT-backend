@@ -7,10 +7,4 @@ import lombok.Setter;
 @Setter
 public class AiRequest {
     private String prompt;
-
-    public AiRequest() {}
-
-    public AiRequest(String prompt) {
-        this.prompt = prompt;
-    }
 }

@@ -19,7 +19,7 @@ public class AIService {
 
     @Value("${API_URL}")
     private String apiUrl;
-    
+
     public String getAIResponse(String userMessage) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -35,7 +35,7 @@ public class AIService {
             Map<String, String> responseBody = objectMapper.readValue(response.getBody(), Map.class);
             return responseBody.get("message");
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            e.getMessage();
             return "Error processing AI response";
         }
     }
