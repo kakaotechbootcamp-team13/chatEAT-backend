@@ -49,8 +49,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" | tr -d '\r' > chat-eat.pem             # SSH 키 파일 생성
           chmod 600 chat-eat.pem                       # 키 파일 권한 설정
-          ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$HOST << 'EOF'
-            ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem -L 8080:$BACKEND_HOST:8080 $USER@$BACKEND_HOST << 'EOC'
+          ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem ${{ secrets.EC2_USER }}@$HOST << 'EOF'
+            ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem -L 8080:${{ secrets.BACKEND_HOST }}:8080 ${{ secrets.EC2_USER }}@${{ secrets.BACKEND_HOST }} << 'EOC'
               echo "Pulling image: ${{ secrets.IMAGE_NAME }}"
               docker pull ${{ secrets.IMAGE_NAME }}
               if [ $(docker ps -q -f name=chateat-container) ]; then
@@ -60,6 +60,6 @@ jobs:
               fi
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
               docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
-EOC
+            EOC
           EOF
           rm chat-eat.pem
