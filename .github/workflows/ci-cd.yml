@@ -51,9 +51,9 @@ jobs:
           chmod 600 chat-eat.pem                         # 키 파일 권한 설정
           
           # 바스천 호스트를 통해 프라이빗 EC2 인스턴스에 접근
-          ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@${{ secrets.BASTION_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$BASTION_HOST << '          EOF'
             # 프라이빗 서브넷의 EC2 인스턴스에 대한 SSH 접근
-            ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@${{ secrets.EC2_HOST }} << 'INNER_EOF'
+            ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$TARGET_HOST << '            INNER_EOF'
               # 도커 허브에서 새로운 Docker 이미지 가져오기
               echo "Pulling image: ${{ secrets.IMAGE_NAME }}"
               docker pull ${{ secrets.IMAGE_NAME }}
