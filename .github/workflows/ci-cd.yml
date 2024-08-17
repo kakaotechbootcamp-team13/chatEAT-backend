@@ -45,29 +45,29 @@ jobs:
           USER: ${{ secrets.EC2_USER }}                     # EC2 사용자 이름
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}         # SSH 비공개 키
           IMAGE_NAME: ${{ secrets.IMAGE_NAME }} # Docker 이미지 이름을 Secrets에서 가져옴
-	  BACKEND_HOST: ${{ secrets.BACKEND_HOST }}       # 백엔드 서버의 프라이빗 IP
+          BACKEND_HOST: ${{ secrets.BACKEND_HOST }}       # 백엔드 서버의 프라이빗 IP
         run: |
           echo "$PRIVATE_KEY" | tr -d '\r' > chat-eat.pem             # SSH 키 파일 생성
           chmod 600 chat-eat.pem                       # 키 파일 권한 설정
           ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$HOST << 'EOF' # EC2에 SSH로 접속
-	    # ssh 터널링 설정
-	    ssh -o StrictHostKeyChecking=no -i chat-eat.pem -L 8080:$BACKEND_HOST:8080 $USER@$BACKEND_HOST << 'EOC'
+            # ssh 터널링 설정
+            ssh -o StrictHostKeyChecking=no -i chat-eat.pem -L 8080:$BACKEND_HOST:8080 $USER@$BACKEND_HOST << 'EOC'
 
               # 도커 허브에서 새로운 Docker 이미지 가져오기
               echo "Pulling image: ${{ secrets.IMAGE_NAME }}" # 이미지 이름 확인
               docker pull ${{ secrets.IMAGE_NAME }}
-          
+
               if [ $(docker ps -q -f name=chateat-container) ]; then
                 echo "Stopping and removing existing container"
                 docker stop chateat-container
                 docker rm chateat-container
               fi
-          
+
               # 새로운 컨테이너 실행
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
               docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
             EOC
-	  EOF
-          
+          EOF
+
           # SSH 키 파일 삭제
           rm chat-eat.pem
