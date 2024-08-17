@@ -60,6 +60,6 @@ jobs:
               fi
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
               docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
-            EOC
+EOC
           EOF
           rm chat-eat.pem
