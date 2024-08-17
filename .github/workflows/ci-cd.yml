@@ -1,4 +1,4 @@
-name: CI/CD Pipeline    # workflow의 이름
+name: CI/CD Pipeline   # workflow의 이름
 
 on:
   push:
@@ -39,27 +39,36 @@ jobs:
         run: |
           docker push ${{ secrets.IMAGE_NAME }} # Docker Hub에 이미지 푸시
 
-      - name: Deploy to EC2                               # EC2에 배포
+      - name: Deploy to Backend EC2 through Bastion Host      # 바스천 호스트를 통한 백엔드 EC2 배포
         env:
-          HOST: ${{ secrets.EC2_HOST }}               # EC2 호스트 주소
-          USER: ${{ secrets.EC2_USER }}                     # EC2 사용자 이름
-          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}         # SSH 비공개 키
-          IMAGE_NAME: ${{ secrets.IMAGE_NAME }} # Docker 이미지 이름
-          BACKEND_HOST: ${{ secrets.BACKEND_HOST }}       # 백엔드 서버의 프라이빗 IP
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}    # 바스천 호스트 주소
+          TARGET_HOST: ${{ secrets.EC2_HOST }}         # 프라이빗 서브넷의 EC2 인스턴스 주소
+          USER: ${{ secrets.EC2_USER }}                 # EC2 사용자 이름
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}           # SSH 비공개 키
+          IMAGE_NAME: ${{ secrets.IMAGE_NAME }}         # Docker 이미지 이름을 Secrets에서 가져옴
         run: |
-          echo "$PRIVATE_KEY" | tr -d '\r' > chat-eat.pem             # SSH 키 파일 생성
-          chmod 600 chat-eat.pem                       # 키 파일 권한 설정
-          ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem ${{ secrets.EC2_USER }}@$HOST << 'EOF'
-            ssh -T -o StrictHostKeyChecking=no -i chat-eat.pem -L 8080:${{ secrets.BACKEND_HOST }}:8080 ${{ secrets.EC2_USER }}@${{ secrets.BACKEND_HOST }} << 'EOC'
+          echo "$SSH_KEY" | tr -d '\r' > chat-eat.pem   # SSH 키 파일 생성
+          chmod 600 chat-eat.pem                         # 키 파일 권한 설정
+          
+          # 바스천 호스트를 통해 프라이빗 EC2 인스턴스에 접근
+          ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@${{ secrets.BASTION_HOST }} << 'EOF'
+            # 프라이빗 서브넷의 EC2 인스턴스에 대한 SSH 접근
+            ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@${{ secrets.EC2_HOST }} << 'INNER_EOF'
+              # 도커 허브에서 새로운 Docker 이미지 가져오기
               echo "Pulling image: ${{ secrets.IMAGE_NAME }}"
               docker pull ${{ secrets.IMAGE_NAME }}
+
               if [ $(docker ps -q -f name=chateat-container) ]; then
                 echo "Stopping and removing existing container"
                 docker stop chateat-container
                 docker rm chateat-container
               fi
+
+              # 새로운 컨테이너 실행
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
               docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
-            EOC
+            INNER_EOF
           EOF
+
+          # SSH 키 파일 삭제
           rm chat-eat.pem
