@@ -27,7 +27,7 @@ public class ChatController {
     private final AIService aiService;
 
     @PostMapping("/chat")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ChatResponse> saveChat(@RequestBody ChatRequest request,
                                                  @AuthenticationPrincipal PrincipalDetails user) {
         String message = request.message();

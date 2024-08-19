@@ -33,7 +33,7 @@ public class AdminController {
     private final MemberService memberService;
 
     @PatchMapping("/change-role/{memberId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<AuthorizeRoleResponse> changeRole(@PathVariable("memberId") Long memberId,
                                                             @RequestBody AuthorizeRoleRequest authorizeRoleRequest) {
         AuthorizeRoleResponse response = memberService.changRole(authorizeRoleRequest, memberId);
@@ -41,7 +41,7 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Map<String, Object>> getMemberListPage(
             @RequestParam(value = "p", defaultValue = "1") int p,
             @RequestParam(value = "size", defaultValue = "20") int size) {
@@ -58,7 +58,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/members/{memberId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal PrincipalDetails user,
                                              @PathVariable("memberId") Long memberId) {
         memberService.deleteMember(memberId, user.getUsername());
