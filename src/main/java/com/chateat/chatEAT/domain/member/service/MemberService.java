@@ -1,8 +1,20 @@
 package com.chateat.chatEAT.domain.member.service;
 
 import com.chateat.chatEAT.domain.member.Member;
-import com.chateat.chatEAT.domain.member.request.*;
-import com.chateat.chatEAT.domain.member.response.*;
+import com.chateat.chatEAT.domain.member.request.AuthorizeRoleRequest;
+import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
+import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
+import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
+import com.chateat.chatEAT.domain.member.request.OAuth2JoinRequest;
+import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
+import com.chateat.chatEAT.domain.member.response.AuthorizeRoleResponse;
+import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
+import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
+import com.chateat.chatEAT.domain.member.response.MemberListPageResponse;
+import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
+import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
+import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
+import com.chateat.chatEAT.domain.member.response.OAuth2JoinResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,6 +27,8 @@ public interface MemberService {
     void updatePassword(UpdatePasswordRequest updatePasswordRequest, String email);
 
     MemberWithdrawResponse withdraw(MemberWithdrawRequest memberWithdrawRequest, String email);
+
+    void deleteMember(Long id, String email);
 
     MyInfoResponse myInfo(String email);
 

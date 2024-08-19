@@ -1,9 +1,22 @@
 package com.chateat.chatEAT.domain.member.service;
 
 import com.chateat.chatEAT.domain.member.Member;
+import com.chateat.chatEAT.domain.member.Role;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
-import com.chateat.chatEAT.domain.member.request.*;
-import com.chateat.chatEAT.domain.member.response.*;
+import com.chateat.chatEAT.domain.member.request.AuthorizeRoleRequest;
+import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
+import com.chateat.chatEAT.domain.member.request.MemberUpdateRequest;
+import com.chateat.chatEAT.domain.member.request.MemberWithdrawRequest;
+import com.chateat.chatEAT.domain.member.request.OAuth2JoinRequest;
+import com.chateat.chatEAT.domain.member.request.UpdatePasswordRequest;
+import com.chateat.chatEAT.domain.member.response.AuthorizeRoleResponse;
+import com.chateat.chatEAT.domain.member.response.EmailCheckResponse;
+import com.chateat.chatEAT.domain.member.response.MemberJoinResponse;
+import com.chateat.chatEAT.domain.member.response.MemberListPageResponse;
+import com.chateat.chatEAT.domain.member.response.MemberUpdateResponse;
+import com.chateat.chatEAT.domain.member.response.MemberWithdrawResponse;
+import com.chateat.chatEAT.domain.member.response.MyInfoResponse;
+import com.chateat.chatEAT.domain.member.response.OAuth2JoinResponse;
 import com.chateat.chatEAT.global.exception.BusinessLogicException;
 import com.chateat.chatEAT.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +92,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void deleteMember(Long id, String loginEmail) {
+        Member member = memberRepository.findByEmail(loginEmail)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        if (member.getRole() != Role.ADMIN) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_ROLE_INVALID);
+        }
+        Member deleteMember = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        memberRepository.delete(deleteMember);
+    }
+
+    @Override
     public MyInfoResponse myInfo(String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
@@ -129,7 +154,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public AuthorizeRoleResponse changRole(AuthorizeRoleRequest request, Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         switch (request.role()) {
             case "ADMIN" -> member.authorizeAdmin();
             case "USER" -> member.authorizeUser();
