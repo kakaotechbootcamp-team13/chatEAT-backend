@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberWithdrawResponse {
-    
-    String email;
+
+    private String email;
 
     public static MemberWithdrawResponse of(String email) {
         return new MemberWithdrawResponse(email);

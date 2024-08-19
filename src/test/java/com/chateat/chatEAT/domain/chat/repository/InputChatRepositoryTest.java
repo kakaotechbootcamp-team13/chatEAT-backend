@@ -2,13 +2,13 @@ package com.chateat.chatEAT.domain.chat.repository;
 
 import com.chateat.chatEAT.domain.chat.InputChat;
 import com.chateat.chatEAT.domain.chat.OutputChat;
-import com.chateat.chatEAT.domain.chat.service.ChatService;
+import com.chateat.chatEAT.domain.chat.dto.ChatResponse;
+import com.chateat.chatEAT.domain.chat.service.InputChatService;
 import com.chateat.chatEAT.domain.chat.service.OutputChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.xmlunit.builder.Input;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +21,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
         "spring.mongodb.embedded.version=4.0.2",
         "spring.data.mongodb.uri=mongodb://localhost:27017/testdb"
 })
-public class ChatRepositoryTest {
+public class InputChatRepositoryTest {
 
     @Autowired
-    private ChatService chatService;
+    private InputChatService inputChatService;
 
     @Autowired
     private OutputChatService outputChatService;
@@ -38,11 +38,11 @@ public class ChatRepositoryTest {
         chat.setTimestamp(LocalDateTime.now());
 
         // When
-        InputChat savedChat = chatService.saveChat(chat);
+        InputChat savedChat = inputChatService.saveChat(chat);
 
         // Then
         assertThat(savedChat.getId()).isNotNull(); // 저장된 후 ID가 생성되었는지 확인
-        assertThat(chatService.findById(savedChat.getId())).isPresent(); // 데이터가 저장되었는지 확인
+        assertThat(inputChatService.findById(savedChat.getId())).isPresent(); // 데이터가 저장되었는지 확인
     }
 
     @DisplayName("Mongodb_output")
@@ -54,7 +54,7 @@ public class ChatRepositoryTest {
         chat.setTimestamp(LocalDateTime.now());
 
         // When
-        OutputChat savedChat = outputChatService.saveChat(chat);
+        ChatResponse savedChat = outputChatService.saveChat(chat);
 
         // Then
         assertThat(savedChat.getId()).isNotNull(); // 저장된 후 ID가 생성되었는지 확인

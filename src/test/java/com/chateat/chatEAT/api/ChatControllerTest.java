@@ -4,12 +4,12 @@ import com.chateat.chatEAT.auth.dto.AuthDto;
 import com.chateat.chatEAT.domain.chat.InputChat;
 import com.chateat.chatEAT.domain.chat.OutputChat;
 import com.chateat.chatEAT.domain.chat.service.AIService;
-import com.chateat.chatEAT.domain.chat.service.ChatService;
+import com.chateat.chatEAT.domain.chat.service.InputChatService;
 import com.chateat.chatEAT.domain.chat.service.OutputChatService;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
 import com.chateat.chatEAT.domain.member.request.MemberJoinRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ public class ChatControllerTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    private ChatService chatService;
+    private InputChatService inputChatService;
 
     @MockBean
     private OutputChatService outputChatService;
@@ -115,7 +115,7 @@ public class ChatControllerTest {
 
         // input에 저장된 데이터 확인
         ArgumentCaptor<InputChat> inputChatCaptor = ArgumentCaptor.forClass(InputChat.class);
-        Mockito.verify(chatService).saveChat(inputChatCaptor.capture());
+        Mockito.verify(inputChatService).saveChat(inputChatCaptor.capture());
         assertThat(inputChatCaptor.getValue().getMessage()).isEqualTo("Hello, AI!");
         assertThat(inputChatCaptor.getValue().getEmail()).isEqualTo("test@test.com");
         assertThat(inputChatCaptor.getValue().isBotResponse()).isFalse();

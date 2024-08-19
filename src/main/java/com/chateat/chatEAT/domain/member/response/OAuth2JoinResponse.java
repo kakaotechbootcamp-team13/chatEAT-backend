@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OAuth2JoinResponse {
 
-    String email;
-    String nickname;
-    String socialType;
+    private String email;
+    private String nickname;
+    private String socialType;
 
     public static OAuth2JoinResponse of(Member member) {
         return new OAuth2JoinResponse(member.getEmail(), member.getNickname(), String.valueOf(member.getSocialType()));

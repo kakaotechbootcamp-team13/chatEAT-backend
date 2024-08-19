@@ -13,8 +13,6 @@ import com.chateat.chatEAT.global.redis.RedisService;
 import com.chateat.chatEAT.oauth2.CustomOAuth2MemberService;
 import com.chateat.chatEAT.oauth2.handler.OAuth2LoginFailureHandler;
 import com.chateat.chatEAT.oauth2.handler.OAuth2LoginSuccessHandler;
-import java.util.Arrays;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +32,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -67,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/members/join", "/auth/login", "/auth/reissue",
                                 "/members/email-check/**",
                                 "members/nickname-check/**", "/swagger-ui/**",
-                                "/api-docs/**","/chat/**")
+                                "/api-docs/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login((oauth2Login) ->
