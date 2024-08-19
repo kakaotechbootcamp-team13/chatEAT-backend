@@ -41,7 +41,7 @@ public class MemberController {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<MemberUpdateResponse> update(@AuthenticationPrincipal PrincipalDetails user,
                                                        @RequestBody final MemberUpdateRequest request) {
         MemberUpdateResponse response = memberService.update(request, user.getUsername());
@@ -49,7 +49,7 @@ public class MemberController {
     }
 
     @PatchMapping("/update-password")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Void> updatePassword(@AuthenticationPrincipal PrincipalDetails user,
                                                @RequestBody final UpdatePasswordRequest request) {
         memberService.updatePassword(request, user.getUsername());
@@ -57,7 +57,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/withdraw")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal PrincipalDetails user,
                                                            @RequestBody final MemberWithdrawRequest request) {
         MemberWithdrawResponse response = memberService.withdraw(request, user.getUsername());
@@ -65,14 +65,14 @@ public class MemberController {
     }
 
     @DeleteMapping("/oauth2/withdraw")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<MemberWithdrawResponse> withdraw(@AuthenticationPrincipal PrincipalDetails user) {
         MemberWithdrawResponse response = memberService.oauth2Withdraw(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/myInfo")
-    @PreAuthorize("hasRole('USER'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<MyInfoResponse> myInfo(@AuthenticationPrincipal PrincipalDetails user) {
         MyInfoResponse response = memberService.myInfo(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -91,7 +91,7 @@ public class MemberController {
     }
 
     @PatchMapping("/oauth2/join")
-    @PreAuthorize("hasRole('GUEST'||'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_GUEST', 'ROLE_ADMIN')")
     public ResponseEntity<OAuth2JoinResponse> oAuth2Join(@RequestBody final OAuth2JoinRequest request) {
         OAuth2JoinResponse response = memberService.oauth2Join(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);

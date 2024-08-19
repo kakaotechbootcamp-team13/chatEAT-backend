@@ -8,15 +8,15 @@ import com.chateat.chatEAT.domain.chat.dto.ChatResponse;
 import com.chateat.chatEAT.domain.chat.service.AIService;
 import com.chateat.chatEAT.domain.chat.service.InputChatService;
 import com.chateat.chatEAT.domain.chat.service.OutputChatService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +27,9 @@ public class ChatController {
     private final AIService aiService;
 
     @PostMapping("/chat")
-    public ResponseEntity<ChatResponse> saveChat(@RequestBody ChatRequest request, @AuthenticationPrincipal PrincipalDetails user) {
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<ChatResponse> saveChat(@RequestBody ChatRequest request,
+                                                 @AuthenticationPrincipal PrincipalDetails user) {
         String message = request.message();
 
         InputChat userChat = new InputChat();

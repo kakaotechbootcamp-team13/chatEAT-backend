@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MyInfoResponse {
 
+    private Long id;
     private String email;
     private String nickname;
     private String socialType;
     private String role;
 
     public static MyInfoResponse of(Member member) {
-        return new MyInfoResponse(member.getEmail(), member.getNickname(),
+        return new MyInfoResponse(member.getId(), member.getEmail(), member.getNickname(),
                 member.getSocialType() != null ? member.getSocialType().toString() : null, member.getRole().getKey());
     }
 }

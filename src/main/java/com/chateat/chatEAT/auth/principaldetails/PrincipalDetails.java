@@ -1,10 +1,11 @@
 package com.chateat.chatEAT.auth.principaldetails;
 
-import com.chateat.chatEAT.auth.utils.CustomAuthorityUtils;
 import com.chateat.chatEAT.domain.member.Member;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -60,8 +61,8 @@ public class PrincipalDetails extends Member implements UserDetails, OAuth2User 
     }
 
     @Override
-    public List<GrantedAuthority> getAuthorities() {
-        return CustomAuthorityUtils.createAuthorities(role);
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
     @Override
