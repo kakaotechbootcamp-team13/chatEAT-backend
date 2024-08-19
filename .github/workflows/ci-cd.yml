@@ -12,10 +12,10 @@ jobs:
 
     steps:                              # 단계 정의
     - name: Check out code              # 코드 체크아웃 단계
-      uses: actions/checkout@v2         # GitHub 액션을 사용하여 코드를 가져옴
+      uses: actions/checkout@v3         # GitHub 액션을 사용하여 코드를 가져옴 (v3로 업데이트)
 
     - name: Set up JDK                  # JDK 설정
-      uses: actions/setup-java@v2       # JDK 설치 액션
+      uses: actions/setup-java@v3       # JDK 설치 액션 (v3로 업데이트)
       with:
         java-version: '17'              # 설치할 JDK 버전
         distribution: 'adopt'           # JDK 배포판 설정
@@ -31,7 +31,7 @@ jobs:
         docker build -t sodamkim/chateat-backend:latest .  # Docker 이미지 생성
 
     - name: Log in to Docker Hub        # Docker Hub 로그인
-      uses: docker/login-action@v1      # Docker Hub 로그인 액션 사용
+      uses: docker/login-action@v2      # Docker Hub 로그인 액션 (v2로 업데이트)
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -60,4 +60,3 @@ jobs:
           # 새로운 컨테이너 실행
           docker run -d --name chateat-container -p 8080:8080 $IMAGE_NAME
         EOF
-
