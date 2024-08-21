@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev  # dev 브랜치에 푸시될 때 워크플로가 트리거
-      - feature/add-docker-and-ci
+      - feature/add-docker-and-ci  # test
 
 jobs:
   build:                                # 작업의 이름
