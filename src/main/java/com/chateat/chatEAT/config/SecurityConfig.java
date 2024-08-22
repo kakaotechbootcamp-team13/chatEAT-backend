@@ -50,6 +50,8 @@ public class SecurityConfig {
     private final PrincipalDetailsService principalDetailsService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2MemberService customOAuth2MemberService;
     private final PasswordEncoder passwordEncoder;
 
@@ -66,8 +68,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                        .accessDeniedHandler(new CustomAccessDeniedHandler()))
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .with(new CustomFilterConfigurer(), Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/", "/members/join", "/auth/login", "/auth/reissue",

@@ -15,6 +15,7 @@ public enum ExceptionCode {
     LOCKED_MEMBER(403, "비활성화된 계정입니다."),
     NOT_SOCIAL_MEMBER(404, "소셜 로그인 회원이 아닙니다."),
     WRONG_ROLE(400, "올바르지 않은 Role 입니다."),
+    MEMBER_BLOCKED(403, "비활성화된 계정입니다."),
 
     // Security, JWT
     NO_ACCESS_TOKEN(403, "토큰에 권한 정보가 존재하지 않습니다."),

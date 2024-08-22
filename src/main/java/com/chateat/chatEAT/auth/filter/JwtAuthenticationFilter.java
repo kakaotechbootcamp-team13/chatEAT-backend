@@ -39,13 +39,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
-        log.info("Attempting authentication for email: {}", loginDto.getEmail());
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(), loginDto.getPassword());
-        return authenticationManager.authenticate(authenticationToken);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
+            log.info("Attempting authentication for email: {}", loginDto.getEmail());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    loginDto.getEmail(), loginDto.getPassword());
+            return authenticationManager.authenticate(authenticationToken);
+        } catch (IOException e) {
+            log.error("Error reading login request: {}", e.getMessage());
+            throw new AuthenticationException("Error reading login request", e) {
+            };
+        } catch (AuthenticationException e) {
+            log.error("Authentication failed: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Override

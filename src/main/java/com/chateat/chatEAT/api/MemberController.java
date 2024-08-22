@@ -96,18 +96,4 @@ public class MemberController {
         OAuth2JoinResponse response = memberService.oauth2Join(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-//    @PatchMapping("/blockMember") // 나중에 Admin Controller로 이동
-////    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<Void> blockMember(@RequestBody final MemberBlockRequest request) {
-//        memberService.memberBlock(request.email());
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PatchMapping("/unblockMember") // 나중에 Admin Controller로 이동
-////    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<Void> unblockMember(@RequestBody final MemberBlockRequest request) {
-//        memberService.memberUnblock(request.email());
-//        return ResponseEntity.ok().build();
-//    }
 }

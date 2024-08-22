@@ -32,8 +32,16 @@ public class ErrorResponse {
         return new ErrorResponse(status.value(), status.getReasonPhrase());
     }
 
+    public static ErrorResponse of(HttpStatus status, String message) {
+        return new ErrorResponse(status.value(), message);
+    }
+
     public static ErrorResponse of(ExceptionCode exceptionCode) {
         return new ErrorResponse(exceptionCode.getStatus(), exceptionCode.getMessage());
+    }
+
+    public static ErrorResponse of(ExceptionCode exceptionCode, String message) {
+        return new ErrorResponse(exceptionCode.getStatus(), message);
     }
 
     public static ErrorResponse of(BindingResult bindingResult) {
