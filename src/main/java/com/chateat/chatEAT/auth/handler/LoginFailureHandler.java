@@ -1,6 +1,7 @@
 package com.chateat.chatEAT.auth.handler;
 
 import com.chateat.chatEAT.auth.utils.Responder;
+import com.chateat.chatEAT.domain.member.exception.MemberBlockedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,6 +18,11 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
         log.error("Authentication failure : {}", exception.getMessage());
-        Responder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
+        if (exception.getCause() instanceof MemberBlockedException) {
+            Responder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED,
+                    "Blocked Account");
+        } else {
+            Responder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
+        }
     }
 }

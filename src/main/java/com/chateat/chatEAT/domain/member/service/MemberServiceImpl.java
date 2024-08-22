@@ -169,19 +169,19 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findAll(pageable).map(MemberListPageResponse::of);
     }
 
-//    @Override
-//    public void memberBlock(String email) {
-//        Member member = memberRepository.findByEmail(email)
-//                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-//        member.blockMember();
-//    }
-//
-//    @Override
-//    public void memberUnblock(String email) {
-//        Member member = memberRepository.findByEmail(email)
-//                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-//        member.unblockMember();
-//    }
+    @Override
+    public void memberBlock(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        member.blockMember();
+    }
+
+    @Override
+    public void memberUnblock(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        member.unblockMember();
+    }
 
     @Transactional(readOnly = true)
     public Member findMember(Long id) {

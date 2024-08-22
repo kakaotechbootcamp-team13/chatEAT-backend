@@ -36,9 +36,9 @@ public interface MemberService {
 
     boolean checkNickname(String nickname);
 
-//    void memberBlock(String email);
-//
-//    void memberUnblock(String email);
+    void memberBlock(Long id);
+
+    void memberUnblock(Long id);
 
     OAuth2JoinResponse oauth2Join(OAuth2JoinRequest request);
 

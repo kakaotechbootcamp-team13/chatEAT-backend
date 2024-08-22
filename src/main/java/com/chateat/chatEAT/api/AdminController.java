@@ -2,6 +2,7 @@ package com.chateat.chatEAT.api;
 
 import com.chateat.chatEAT.auth.principaldetails.PrincipalDetails;
 import com.chateat.chatEAT.domain.member.request.AuthorizeRoleRequest;
+import com.chateat.chatEAT.domain.member.request.MemberBlockRequest;
 import com.chateat.chatEAT.domain.member.response.AuthorizeRoleResponse;
 import com.chateat.chatEAT.domain.member.response.MemberListPageResponse;
 import com.chateat.chatEAT.domain.member.service.MemberService;
@@ -62,6 +63,20 @@ public class AdminController {
     public ResponseEntity<Void> deleteMember(@AuthenticationPrincipal PrincipalDetails user,
                                              @PathVariable("memberId") Long memberId) {
         memberService.deleteMember(memberId, user.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/blockMember")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> blockMember(@RequestBody final MemberBlockRequest request) {
+        memberService.memberBlock(request.id());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/unblockMember")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> unblockMember(@RequestBody final MemberBlockRequest request) {
+        memberService.memberUnblock(request.id());
         return ResponseEntity.ok().build();
     }
 }

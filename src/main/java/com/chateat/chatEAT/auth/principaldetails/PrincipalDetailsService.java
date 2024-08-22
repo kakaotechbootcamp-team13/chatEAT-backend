@@ -1,6 +1,7 @@
 package com.chateat.chatEAT.auth.principaldetails;
 
 import com.chateat.chatEAT.domain.member.Member;
+import com.chateat.chatEAT.domain.member.exception.MemberBlockedException;
 import com.chateat.chatEAT.domain.member.repository.MemberRepository;
 import com.chateat.chatEAT.global.exception.BusinessLogicException;
 import com.chateat.chatEAT.global.exception.ExceptionCode;
@@ -21,13 +22,18 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("loadUserByUsername execute, email {}", email);
-        return memberRepository.findByEmail(email)
-                .map(this::createPrincipalDetails)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.debug("loadUserByUsername exception occur email {}", email);
                     return new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
                 });
+
+        if (member.isBlocked()) {
+            log.debug("Blocked user tried to login, email {}", email);
+            throw new MemberBlockedException("비활성화된 계정입니다.");
+        }
+
+        return createPrincipalDetails(member);
     }
 
     private UserDetails createPrincipalDetails(Member member) {

@@ -1,8 +1,19 @@
 package com.chateat.chatEAT.domain.member;
 
 import com.chateat.chatEAT.oauth2.SocialType;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Table(name = "member")
@@ -19,6 +30,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(unique = true)
@@ -33,10 +45,6 @@ public class Member {
     private String socialId;
 
     private boolean isBlocked = false;
-
-//    private int loginFailureCount;
-//
-//    private static final int MAX_LOGIN_FAILURE_COUNT = 5;
 
     public void authorizeUser() {
         this.role = Role.USER;
@@ -54,24 +62,13 @@ public class Member {
         this.nickname = nickname;
     }
 
-//    public void blockMember() {
-//        this.isBlocked = true;
-//    }
-//
-//    public void unblockMember() {
-//        this.isBlocked = false;
-//    }
-//
-//    public void increaseLoginFailureCount() {
-//        this.loginFailureCount++;
-//        if (this.loginFailureCount >= MAX_LOGIN_FAILURE_COUNT) {
-//            this.isBlocked = true;
-//        }
-//    }
-//
-//    public void resetLoginFailureCount() {
-//        this.loginFailureCount = 0;
-//    }
+    public void blockMember() {
+        this.isBlocked = true;
+    }
+
+    public void unblockMember() {
+        this.isBlocked = false;
+    }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);

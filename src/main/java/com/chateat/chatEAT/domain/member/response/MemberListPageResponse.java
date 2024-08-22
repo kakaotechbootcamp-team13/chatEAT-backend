@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberListPageResponse {
     private Long id;
+    private boolean isBlocked;
     private String email;
     private String nickname;
     private Role role;
     private SocialType socialType;
 
     public static MemberListPageResponse of(Member member) {
-        return new MemberListPageResponse(member.getId(), member.getEmail(), member.getNickname(), member.getRole(), member.getSocialType());
+        return new MemberListPageResponse(member.getId(), member.isBlocked(), member.getEmail(), member.getNickname(),
+                member.getRole(), member.getSocialType());
     }
 }
