@@ -15,9 +15,12 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=builder /app/build/libs/chatEAT-0.0.1-SNAPSHOT.jar app.jar
 
-# 6. 애플리케이션 포트 노출
+# 6. 테스트 파일 복사
+COPY test-file.txt /app/test-file.txt
+
+# 7. 애플리케이션 포트 노출
 EXPOSE 8080
 
-# 7. 애플리케이션 실행
+# 8. 애플리케이션 실행
 CMD ["java", "-jar", "app.jar"]
 
