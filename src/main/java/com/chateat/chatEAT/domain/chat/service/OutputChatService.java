@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,9 @@ public class OutputChatService {
 
     public Optional<OutputChat> findById(String id) {
         return outputChatRepository.findById(id);
+    }
+
+    public List<OutputChat> findChatsByEmail(String email) {
+        return outputChatRepository.findByEmailOrderByTimestamp(email);
     }
 }
