@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,7 +30,8 @@ public class ChatController {
     @PostMapping("/chat")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ChatResponse> saveChat(@RequestBody ChatRequest request,
-                                                 @AuthenticationPrincipal PrincipalDetails user) {
+                                                 @AuthenticationPrincipal PrincipalDetails user,
+                                                 @RequestHeader("Authorization") String authToken) {
         String message = request.message();
 
         InputChat userChat = new InputChat();
@@ -40,7 +42,7 @@ public class ChatController {
         inputChatService.saveChat(userChat);
 
         //AI API로 메시지 전송
-        String aiResponseMessage = aiService.getAIResponse(message);
+        String aiResponseMessage = aiService.getAIResponse(message, authToken);
 
         //응답 메시지 저장
         OutputChat aiChat = new OutputChat();
