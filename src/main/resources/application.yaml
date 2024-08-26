@@ -64,6 +64,8 @@ logging:
 
       hibernate:
         SQL: debug
+  file:
+    path: /var/log/chateat
 
 springdoc:
   swagger-ui:
