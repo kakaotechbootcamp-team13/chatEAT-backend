@@ -59,7 +59,7 @@ jobs:
               docker pull ${{ secrets.IMAGE_NAME }}
         
               # 기존 컨테이너가 실행 중인지 확인 및 제거
-              if [ $(docker ps -q -f name=chateat-container) ]; then
+              if [ $(docker ps -a -q -f name=chateat-container) ]; then
                 echo "Stopping and removing existing container"
                 docker stop chateat-container || true
                 docker rm chateat-container || true
