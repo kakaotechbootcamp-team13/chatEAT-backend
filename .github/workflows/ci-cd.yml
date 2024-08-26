@@ -68,7 +68,7 @@ jobs:
               # 새로운 컨테이너 실행
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
               docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
-            INNER_EOF
+          INNER_EOF
           EOF
 
           # SSH 키 파일 삭제
