@@ -1,21 +1,24 @@
-# 1. Gradle 빌드를 위한 베이스 이미지
+# Gradle 빌드를 위한 베이스 이미지
 FROM gradle:7.5-jdk17 AS builder
 
-# 2. 소스 복사 및 작업 디렉토리 설정
+# 소스 복사 및 작업 디렉토리 설정
 WORKDIR /app
 COPY . /app
 
-# 3. Gradle 빌드 실행
+# Gradle 빌드 실행
 RUN gradle build -x test
 
-# 4. 실행을 위한 새로운 베이스 이미지
+# 실행을 위한 새로운 베이스 이미지
 FROM openjdk:17-jdk-slim
 
-# 5. 빌드된 JAR 파일 복사
+# 빌드된 JAR 파일 복사
 WORKDIR /app
 COPY --from=builder /app/build/libs/chatEAT-0.0.1-SNAPSHOT.jar app.jar
 
-# 6. 환경 변수 설정
+# application.yaml 파일 복사
+COPY --from=builder /app/src/main/resources/application.yaml /app/resources/
+
+# 환경 변수 설정
 ENV MYSQL_URL=jdbc:mysql://chateat-mysql.cvesmgcuk54g.ap-northeast-2.rds.amazonaws.com:3306/chateat_mysql
 ENV MYSQL_USERNAME=admin
 ENV MYSQL_PASSWORD=HzwaT15iJu9EVdxewDrC
@@ -36,9 +39,9 @@ ENV KAKAO_REDIRECT_URI=http://ec2-52-79-76-137.ap-northeast-2.compute.amazonaws.
 ENV FRONT_END_SERVER=http://chateat-front.s3-website.ap-northeast-2.amazonaws.com/
 ENV API_URL=http://localhost:8080/api
 
-# 7. 애플리케이션 포트 노출
+# 애플리케이션 포트 노출
 EXPOSE 8080
 
-# 8. 애플리케이션 실행
+# 애플리케이션 실행
 CMD ["java", "-jar", "app.jar"]
 
