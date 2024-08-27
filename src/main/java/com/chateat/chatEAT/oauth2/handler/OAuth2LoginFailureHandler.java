@@ -22,7 +22,6 @@ public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
         String targetUrl = determineTargetUrl(exception);
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
         log.info("Fail Social Login : {}", exception.getMessage());
     }

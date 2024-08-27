@@ -21,7 +21,7 @@ public class AuthController {
 
     @PatchMapping("/reissue")
     public ResponseEntity<Void> reissue(HttpServletRequest request, HttpServletResponse response) {
-        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshToken(request);
+        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshTokenFromCookie(request);
         String newAccessToken = authService.reissueAccessToken(encryptedRefreshToken);
         jwtTokenProvider.accessTokenSetHeader(newAccessToken, response);
 
@@ -31,7 +31,7 @@ public class AuthController {
     @PatchMapping("/logout")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
-        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshToken(request);
+        String encryptedRefreshToken = jwtTokenProvider.resolveRefreshTokenFromCookie(request);
         String accessToken = jwtTokenProvider.resolveAccessToken(request);
         authService.logout(encryptedRefreshToken, accessToken);
 

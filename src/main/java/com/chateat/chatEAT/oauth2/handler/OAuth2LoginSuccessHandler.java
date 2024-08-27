@@ -58,10 +58,13 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         TokenDto tokenDto = jwtTokenProvider.generateTokenDto(principalDetails);
         String accessToken = tokenDto.getAccessToken();
         String refreshToken = tokenDto.getRefreshToken();
+        String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         Member member = memberRepository.findByEmail(principalDetails.getUsername())
                 .orElseThrow(() -> new BusinessLogicException(
                         ExceptionCode.MEMBER_NOT_FOUND));
+
+        jwtTokenProvider.refreshTokenSetCookie(encryptedRefreshToken, response);
 
         long refreshTokenExpirationPeriod = jwtTokenProvider.getRefreshTokenExpirationPeriod();
         redisService.setValues(member.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
@@ -70,7 +73,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .queryParam("email", principalDetails.getUsername())
                 .queryParam("role", principalDetails.role())
                 .queryParam("accessToken", BEARER_PREFIX + accessToken)
-                .queryParam("refreshToken", refreshToken)
+//                .queryParam("refreshToken", refreshToken)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();
@@ -89,6 +92,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String refreshToken = tokenDto.getRefreshToken();
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
+        jwtTokenProvider.refreshTokenSetCookie(encryptedRefreshToken, response);
+
         long refreshTokenExpirationPeriod = jwtTokenProvider.getRefreshTokenExpirationPeriod();
         redisService.setValues(member.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
 
@@ -96,7 +101,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .queryParam("email", member.getEmail())
                 .queryParam("nickname", member.getNickname())
                 .queryParam("accessToken", BEARER_PREFIX + accessToken)
-                .queryParam("refreshToken", encryptedRefreshToken)
+//                .queryParam("refreshToken", encryptedRefreshToken)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();
