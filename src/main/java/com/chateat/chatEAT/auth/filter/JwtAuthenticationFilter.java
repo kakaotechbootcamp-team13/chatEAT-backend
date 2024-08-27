@@ -67,7 +67,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String encryptedRefreshToken = aes128Config.encryptAes(refreshToken);
 
         jwtTokenProvider.accessTokenSetHeader(accessToken, response);
-        jwtTokenProvider.refreshTokenSetHeader(encryptedRefreshToken, response);
+//        jwtTokenProvider.refreshTokenSetHeader(encryptedRefreshToken, response);
+        jwtTokenProvider.refreshTokenSetCookie(encryptedRefreshToken, response);
 
         Member member = memberService.findMember(principalDetails.getId());
         log.info("Find member: {}", member.getEmail());

@@ -14,6 +14,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
@@ -169,6 +170,16 @@ public class JwtTokenProvider {
         response.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
     }
 
+    public void refreshTokenSetCookie(String refreshToken, HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); Https 사용할 경우 true
+        cookie.setPath("/");
+        cookie.setMaxAge(14 * 24 * 60 * 60);
+
+        response.addCookie(cookie);
+    }
+
     public String resolveAccessToken(HttpServletRequest request) {
         log.info("ResolveAccessToken execute request = {}", request.toString());
         String accessToken = request.getHeader(AUTHORIZATION_HEADER);
@@ -183,6 +194,18 @@ public class JwtTokenProvider {
         String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
         if (StringUtils.hasText(refreshToken)) {
             return refreshToken;
+        }
+        return null;
+    }
+
+    public String resolveRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }
