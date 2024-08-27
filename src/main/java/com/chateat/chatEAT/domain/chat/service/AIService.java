@@ -1,6 +1,5 @@
 package com.chateat.chatEAT.domain.chat.service;
 
-import com.chateat.chatEAT.auth.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
