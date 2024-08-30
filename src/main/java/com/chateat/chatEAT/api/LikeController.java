@@ -31,7 +31,6 @@ public class LikeController {
     public ResponseEntity<List<LikeChat>> getUserLikes(@AuthenticationPrincipal PrincipalDetails user) {
         String userEmail = user.getUsername();
         List<LikeChat> userLikes = likeChatRepository.findByEmail(userEmail);
-
         return ResponseEntity.ok(userLikes);
     }
 
@@ -62,7 +61,7 @@ public class LikeController {
 
     @DeleteMapping("/like/{messageId}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteLike(@PathVariable String messageId,
+    public ResponseEntity<Void> deleteLike(@PathVariable("messageId") String messageId,
                                            @AuthenticationPrincipal PrincipalDetails user) {
         String userEmail = user.getUsername();
         likeChatRepository.deleteByMessageIdAndEmail(messageId, userEmail);
