@@ -14,7 +14,7 @@ import com.chateat.chatEAT.oauth2.CustomOAuth2MemberService;
 import com.chateat.chatEAT.oauth2.handler.OAuth2LoginFailureHandler;
 import com.chateat.chatEAT.oauth2.handler.OAuth2LoginSuccessHandler;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", frontendServer));
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000", frontendServer));
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader("Authorization");
