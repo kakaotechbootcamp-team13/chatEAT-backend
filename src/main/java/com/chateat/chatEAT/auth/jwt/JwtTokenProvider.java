@@ -166,18 +166,21 @@ public class JwtTokenProvider {
         response.setHeader(AUTHORIZATION_HEADER, headerValue);
     }
 
-    public void refreshTokenSetHeader(String refreshToken, HttpServletResponse response) {
-        response.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
-    }
-
     public void refreshTokenSetCookie(String refreshToken, HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true); Https 사용할 경우 true
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(14 * 24 * 60 * 60);
 
         response.addCookie(cookie);
+
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None",
+                cookie.getName(),
+                cookie.getValue(),
+                cookie.getMaxAge(),
+                cookie.getPath());
+        response.setHeader("Set-Cookie", cookieHeader);
     }
 
     public String resolveAccessToken(HttpServletRequest request) {
@@ -185,15 +188,6 @@ public class JwtTokenProvider {
         String accessToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
             return accessToken.substring(7);
-        }
-        return null;
-    }
-
-    public String resolveRefreshToken(HttpServletRequest request) {
-        log.info("ResolveRefreshToken execute, request = {}", request.toString());
-        String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
-        if (StringUtils.hasText(refreshToken)) {
-            return refreshToken;
         }
         return null;
     }
