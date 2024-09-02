@@ -39,6 +39,9 @@ ENV KAKAO_REDIRECT_URI=http://ec2-52-79-76-137.ap-northeast-2.compute.amazonaws.
 ENV FRONT_END_SERVER=http://chateat-front.s3-website.ap-northeast-2.amazonaws.com/
 ENV API_URL=http://localhost:8080/api
 
+# FastAPI URL 환경 변수
+ENV FASTAPI_URL=http://localhost:8081/fastapi
+
 # 애플리케이션 포트 노출
 EXPOSE 8080
 
