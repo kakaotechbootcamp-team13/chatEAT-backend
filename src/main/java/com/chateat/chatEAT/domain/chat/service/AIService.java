@@ -19,7 +19,7 @@ public class AIService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${API_URL}")
+    @Value("${serverUri.aiServer}")
     private String apiUrl;
 
     public String getAIResponse(String userMessage, @RequestHeader("Authorization") String authToken) {
