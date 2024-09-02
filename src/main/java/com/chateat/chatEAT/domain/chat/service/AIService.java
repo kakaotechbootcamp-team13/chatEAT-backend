@@ -29,7 +29,7 @@ public class AIService {
 
 
         Map<String, String> jsonMessage = new HashMap<>();
-        jsonMessage.put("prompt", userMessage);
+        jsonMessage.put("user_input", userMessage);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(jsonMessage, headers);
 
@@ -38,7 +38,7 @@ public class AIService {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 Map<String, String> responseBody = objectMapper.readValue(response.getBody(), Map.class);
-                return responseBody.get("message");
+                return responseBody.get("response");
             } else {
                 return "Unexpected response from AI API: " + response.getStatusCode();
             }
