@@ -8,6 +8,7 @@ import com.chateat.chatEAT.domain.like.dto.MessageIdRequest;
 import com.chateat.chatEAT.domain.like.repository.LikeChatRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.Comparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,7 @@ public class LikeController {
     public ResponseEntity<List<LikeChat>> getUserLikes(@AuthenticationPrincipal PrincipalDetails user) {
         String userEmail = user.getUsername();
         List<LikeChat> userLikes = likeChatRepository.findByEmail(userEmail);
+        userLikes.sort(Comparator.comparing(LikeChat::getTimestamp));
         return ResponseEntity.ok(userLikes);
     }
 
