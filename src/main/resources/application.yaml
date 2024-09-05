@@ -41,7 +41,7 @@ spring:
           kakao:
             client-id: ${KAKAO_ID}
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: https://ec2-3-36-93-200.ap-northeast-2.compute.amazonaws.com/login/oauth2/code/kakao
+            redirect-uri: https://api-chateat.store/login/oauth2/code/kakao
             client-authentication-method: none
             authorization-grant-type: authorization_code
             scope:
