@@ -20,7 +20,14 @@ public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHan
                                         AuthenticationException exception) throws IOException {
         String targetUrl = determineTargetUrl(exception);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-        log.info("Fail Social Login : {}", exception.getMessage());
+        // 실패한 요청의 정보 로그 추가
+        log.info("Fail Social Login: {}", exception.getMessage());
+        log.debug("Request URL: {}", request.getRequestURL());
+        log.debug("Query String: {}", request.getQueryString());
+        log.debug("User Agent: {}", request.getHeader("User-Agent"));
+
+        // 예외 전체 스택 트레이스를 로그로 출력
+        log.error("Authentication failed due to: ", exception);
     }
 
     private String determineTargetUrl(AuthenticationException exception) {
