@@ -75,7 +75,6 @@ public class SecurityConfig {
                                         customOAuth2MemberService))
                                 .successHandler(oAuth2LoginSuccessHandler)
                                 .failureHandler(oAuth2LoginFailureHandler)
-                                .defaultSuccessUrl("https://api-chateat.store/login/oauth2/code/kakao")
                 )
                 .logout(logout -> logout.deleteCookies("JSESSIONID")
                         .logoutUrl("/auth/logout"));
