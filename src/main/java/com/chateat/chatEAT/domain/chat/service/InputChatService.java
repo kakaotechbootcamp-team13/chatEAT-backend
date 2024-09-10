@@ -5,8 +5,9 @@ import com.chateat.chatEAT.domain.chat.repository.InputChatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ public class InputChatService {
     private final InputChatRepository inputChatRepository;
 
     public InputChat saveChat(InputChat inputChat) {
+        inputChat.setCreatedAt(new Date());
         return inputChatRepository.save(inputChat);
     }
 
