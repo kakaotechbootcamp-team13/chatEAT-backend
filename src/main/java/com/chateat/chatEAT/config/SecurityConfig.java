@@ -16,7 +16,6 @@ import com.chateat.chatEAT.oauth2.handler.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,9 +48,6 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2MemberService customOAuth2MemberService;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${serverUri.frontendServer}")
-    private String frontendServer;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
