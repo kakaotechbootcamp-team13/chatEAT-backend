@@ -90,7 +90,7 @@ jobs:
                 -e KAKAO_SECRET=${{ secrets.KAKAO_SECRET }} \
                 -e API_URL=${{ secrets.API_URL }} \
                 ${{ secrets.IMAGE_NAME }}
-            INNER_EOF
+          INNER_EOF
           EOF
           
           # SSH 키 파일 삭제
