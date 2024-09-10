@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Docker Image          # Docker 이미지 빌드
         run: |
-          docker build -t ${{ secrets.IMAGE_NAME }} --build-arg API_URL=http://10.0.2.171:8000/process/ . # Docker 이미지 생성
+          docker build -t ${{ secrets.IMAGE_NAME }} --build-arg API_URL=${{ secrets.API_URL }} .
 
       - name: Log in to Docker Hub        # Docker Hub 로그인
         uses: docker/login-action@v1      # Docker Hub 로그인 액션 사용
@@ -46,10 +46,20 @@ jobs:
           USER: ${{ secrets.EC2_USER }}                 # EC2 사용자 이름
           SSH_KEY: ${{ secrets.EC2_SSH_KEY }}           # SSH 비공개 키
           IMAGE_NAME: ${{ secrets.IMAGE_NAME }}         # Docker 이미지 이름을 Secrets에서 가져옴
+          MYSQL_URL: ${{ secrets.MYSQL_URL }}           # MySQL URL
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }} # MySQL 사용자 이름
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }} # MySQL 비밀번호
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}       # MongoDB URI
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}         # Redis 호스트
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}         # Redis 포트
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }} # JWT 비밀 키
+          AES_SECRET_KEY: ${{ secrets.AES_SECRET_KEY }} # AES 비밀 키
+          KAKAO_ID: ${{ secrets.KAKAO_ID }}             # Kakao ID
+          KAKAO_SECRET: ${{ secrets.KAKAO_SECRET }}     # Kakao 비밀 키
         run: |
           echo "$SSH_KEY" | tr -d '\r' > chat-eat.pem   # SSH 키 파일 생성
           chmod 600 chat-eat.pem                         # 키 파일 권한 설정
-
+          
           # 바스천 호스트를 통해 프라이빗 EC2 인스턴스에 접근
           ssh -o StrictHostKeyChecking=no -i chat-eat.pem $USER@$BASTION_HOST << 'EOF'
             # 프라이빗 서브넷의 EC2 인스턴스에 대한 SSH 접근
@@ -57,19 +67,31 @@ jobs:
               # 도커 허브에서 새로운 Docker 이미지 가져오기
               echo "Pulling image: ${{ secrets.IMAGE_NAME }}"
               docker pull ${{ secrets.IMAGE_NAME }}
-        
+          
               # 기존 컨테이너가 실행 중인지 확인 및 제거
               if [ $(docker ps -a -q -f name=chateat-container) ]; then
                 echo "Stopping and removing existing container"
                 docker stop chateat-container || true
                 docker rm chateat-container || true
               fi
-        
-              # 새로운 컨테이너 실행
+          
+              # 새로운 컨테이너 실행 (환경 변수 전달)
               echo "Starting new container from image: ${{ secrets.IMAGE_NAME }}"
-              docker run -d --name chateat-container -p 8080:8080 ${{ secrets.IMAGE_NAME }}
-          INNER_EOF
+              docker run -d --name chateat-container -p 8080:8080 \
+                -e MYSQL_URL=${{ secrets.MYSQL_URL }} \
+                -e MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} \
+                -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+                -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
+                -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+                -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+                -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+                -e AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }} \
+                -e KAKAO_ID=${{ secrets.KAKAO_ID }} \
+                -e KAKAO_SECRET=${{ secrets.KAKAO_SECRET }} \
+                -e API_URL=${{ secrets.API_URL }} \
+                ${{ secrets.IMAGE_NAME }}
+            INNER_EOF
           EOF
-
+          
           # SSH 키 파일 삭제
           rm chat-eat.pem
