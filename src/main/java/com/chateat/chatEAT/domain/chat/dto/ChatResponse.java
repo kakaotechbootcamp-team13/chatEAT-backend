@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -16,8 +17,9 @@ public class ChatResponse {
     private LocalDateTime timestamp;
     private String email;
     private boolean isBotResponse;
+    private Date createdAt;
 
     public static ChatResponse of(OutputChat chat) {
-        return new ChatResponse(chat.getId(), chat.getMessage(), chat.getTimestamp(), chat.getEmail(), chat.isBotResponse());
+        return new ChatResponse(chat.getId(), chat.getMessage(), chat.getTimestamp(), chat.getEmail(), chat.isBotResponse(), chat.getCreatedAt());
     }
 }

@@ -6,7 +6,6 @@ import com.chateat.chatEAT.domain.chat.repository.OutputChatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +16,6 @@ public class OutputChatService {
     private final OutputChatRepository outputChatRepository;
 
     public ChatResponse saveChat(OutputChat outputChat) {
-        outputChat.setCreatedAt(new Date());
         outputChatRepository.save(outputChat);
         return ChatResponse.of(outputChat);
     }

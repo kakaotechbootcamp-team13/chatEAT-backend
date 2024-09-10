@@ -8,21 +8,18 @@ import com.chateat.chatEAT.domain.chat.dto.ChatResponse;
 import com.chateat.chatEAT.domain.chat.service.AIService;
 import com.chateat.chatEAT.domain.chat.service.InputChatService;
 import com.chateat.chatEAT.domain.chat.service.OutputChatService;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,6 +41,7 @@ public class ChatController {
         userChat.setTimestamp(LocalDateTime.now());
         userChat.setEmail(user.getUsername());
         userChat.setBotResponse(false);
+        userChat.setCreatedAt(new Date());
         inputChatService.saveChat(userChat);
 
         //AI API로 메시지 전송
@@ -55,6 +53,7 @@ public class ChatController {
         aiChat.setTimestamp(LocalDateTime.now());
         aiChat.setEmail(user.getUsername());
         aiChat.setBotResponse(true);
+        aiChat.setCreatedAt(new Date());
         ChatResponse response = outputChatService.saveChat(aiChat);
 
         //응답 메시지 반환
@@ -76,13 +75,15 @@ public class ChatController {
                 chat.getMessage(),
                 chat.getTimestamp(),
                 chat.getEmail(),
-                chat.isBotResponse())));
+                chat.isBotResponse(),
+                chat.getCreatedAt())));
         outputChats.forEach(chat -> chatResponses.add(new ChatResponse(
                 chat.getId(),
                 chat.getMessage(),
                 chat.getTimestamp(),
                 chat.getEmail(),
-                chat.isBotResponse())));
+                chat.isBotResponse(),
+                chat.getCreatedAt())));
 
         chatResponses.sort(Comparator.comparing(ChatResponse::getTimestamp));
 
